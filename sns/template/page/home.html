@@ -4,7 +4,7 @@
 {% block main %}
 <h1>home</h1>
 {% if user.is_authenticated %}
-<h2>ようこそ{{ user }}さん！</h2>
+<h2>ようこそ{{ request.user }}さん！</h2>
 {% else %}
 <h2>ログイン中のユーザーはいません</h2>
 {% endif %}
