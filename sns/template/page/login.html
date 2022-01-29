@@ -4,13 +4,57 @@
 {% endblock %}
 
 {% block main %}
-<h1>login</h1>
+<div class="d-flex justify-content-center" style="margin-top: 150px;">
 <form method="post">
 {% csrf_token %}
-<!--    <label>email:</label><input type="text" name="username">-->
-<!--    <label>password:</label><input type="password" name="password">-->
-    {{form}}
-    <input type="submit" value="login">
-    <a href="{% url 'signup' %}">新規作成</a>
+  {% for item in form %}
+      <div class="row mb-3 form-group">
+          <label for="{{item.id_for_label}}" class="col-sm-2 col-form-label">{{item.label}}</label>
+          <input
+              type="{{item.field.widget.input_type}}"
+              class="w-100 p-2 form-control"
+              {% if item.field.required %}required{% endif %}
+              name="{{item.name}}"
+              id="{{item.id_for_label}}">
+      </div>
+  {% endfor %}
+  <fieldset class="row mb-3">
+    <legend class="col-form-label col-sm-2 pt-0">Radios</legend>
+    <div class="col-sm-10">
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
+        <label class="form-check-label" for="gridRadios1">
+          First radio
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
+        <label class="form-check-label" for="gridRadios2">
+          Second radio
+        </label>
+      </div>
+      <div class="form-check disabled">
+        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="option3" disabled>
+        <label class="form-check-label" for="gridRadios3">
+          Third disabled radio
+        </label>
+      </div>
+    </div>
+  </fieldset>
+  <div class="row mb-3">
+    <div class="col-sm-10 offset-sm-2">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="gridCheck1">
+        <label class="form-check-label" for="gridCheck1">
+          Example checkbox
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-between">
+    <button type="submit" class="btn btn-success">LOGIN</button>
+    <a href="{% url 'signup' %}" style="padding-top: 10px;">新規作成</a>
+  </div>
 </form>
+</div>
 {% endblock %}
