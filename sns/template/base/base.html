@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>sns-demo</title>
+</head>
+<body>
+{% block header %}
+<a href="{% url 'logout' %}">logout</a>
+<br>
+{% endblock %}
+{% block main %}
+main
+{% endblock %}
+{% block footer %}
+<br>
+footer
+{% endblock %}
+
+</body>
+</html>

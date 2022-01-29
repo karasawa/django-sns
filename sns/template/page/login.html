@@ -1,0 +1,17 @@
+{% extends 'base/base.html' %}
+
+{% block main %}
+<h1>login</h1>
+{% if messages %}
+    {% for message in messages %}
+        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+{% endif %}
+<form method="post">
+{% csrf_token %}
+<!--    <label>email:</label><input type="text" name="username">-->
+<!--    <label>password:</label><input type="password" name="password">-->
+    {{form}}
+    <input type="submit" value="login">
+</form>
+{% endblock %}
