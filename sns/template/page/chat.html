@@ -1,18 +1,22 @@
 {% extends 'base/base.html' %}
 
 {% block main %}
-<div class="rounded w-75 mx-auto p-2 d-flex align-items-start flex-column bd-highlight mb-3 border bg-white mt-5" style="height: 450px;">
-  <div class="mb-auto p-2 bd-highlight">
+<div class="rounded w-75 mx-auto p-2 d-flex align-items-start flex-column bd-highlight mb-3 border bg-white mt-5" style="height: 450px;overflow: scroll;scrollbar-color: #d4aa70 #e4e4e4;">
+  <div class="mb-auto p-2 bd-highlight" sytle="display: block">
     {% for item in mes %}
-        <p>{{ item.owner }}_{{ item.content }}</p>
+        {% if item.owner == request.user %}
+            <div class="rounded-3 bg-success p-2 text-white bg-opacity-75 m-4"style="position: relative;left: 680px; max-width: 350px; min-width: 350px;">{{ item.owner }}_{{ item.content }}</div>
+        {% else %}
+            <div class="rounded-3 bg-danger p-2 text-white bg-opacity-75 m-4" style="position: relative;left: 50px;max-width: 350px; min-width: 350px;">{{ item.owner }}_{{ item.content }}</div>
+        {% endif %}
     {% endfor %}
   </div>
 </div>
 <form method="post">
-<div class="mb-3 p-2 bd-highlight w-75 mx-auto">
+<div class="mb-3 p-2 bd-highlight w-75 mx-auto" style="position: relative;bottom: 18px;">
 {% csrf_token %}
   {% for item in form %}
-      <div class="row mb-3 form-group">
+      <div class="row mb-2 form-group">
           <label for="{{item.id_for_label}}" class="col-sm-2 col-form-label w-50">{{item.label}}</label>
           <input
               type="{{item.field.widget.input_type}}"
@@ -23,8 +27,8 @@
               rows="3">
       </div>
   {% endfor %}
-  <button type="submit" class="btn btn-success">送信</button>
-  <button type="submit" class="btn btn-danger">取消</button>
+    <button type="submit" class="btn btn-success">送信</button>
+    <a class="btn btn-danger text-decoration-none text-white" href="{% url 'chat_delete' %}">取消</a>
 </div>
 </form>
 {% endblock %}

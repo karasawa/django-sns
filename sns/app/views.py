@@ -31,6 +31,19 @@ def chat(request):
         return render(request, 'page/chat.html', {'form': ChatForm(),
                                                   'mes': mes})
 
+
+@login_required
+def chat_delete(request):
+    # instance = Message.objects.latest('created_at')
+    instance = Message.objects.filter(owner=request.user).order_by('-created_at')[0]
+    if instance.owner == request.user:
+        instance.delete()
+        return redirect('chat')
+    else:
+        messages.error(request, '削除期限が過ぎています')
+        return redirect('chat')
+
+
 @login_required
 def profile(request):
     instance = Profile.objects.filter(user=request.user)
@@ -69,3 +82,4 @@ def profile(request):
         else:
             form = ProfileForm()
             return render(request, 'page/profile.html', {'form': form})
+
