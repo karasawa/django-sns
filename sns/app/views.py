@@ -5,7 +5,9 @@ from .forms import LoginForm, SignupForm
 from django.contrib import messages
 
 def home(request):
-    params = {}
+    params = {
+        'user': request.user
+    }
     return render(request, 'page/home.html', params)
 
 def login(request):

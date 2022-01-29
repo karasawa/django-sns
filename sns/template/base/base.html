@@ -9,6 +9,15 @@
 <a href="{% url 'logout' %}">logout</a>
 <br>
 {% endblock %}
+
+{% block message_area %}
+{% if messages %}
+    {% for message in messages %}
+        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+{% endif %}
+{% endblock %}
+
 {% block main %}
 main
 {% endblock %}

@@ -1,10 +1,11 @@
 {% extends 'base/base.html' %}
 
+
 {% block main %}
 <h1>home</h1>
 {% if user.is_authenticated %}
-ログイン中
+<h2>ようこそ{{ user }}さん！</h2>
 {% else %}
-未ログイン
+<h2>ログイン中のユーザーはいません</h2>
 {% endif %}
 {% endblock %}
