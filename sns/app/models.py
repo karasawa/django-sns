@@ -2,6 +2,18 @@ from django.db import models
 from django.contrib.auth import get_user_model
 import uuid
 
+class Profile(models.Model):
+    id = models.UUIDField(default=uuid.uuid4(), primary_key=True)
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
+    nick_name = models.CharField(max_length=20)
+    icon = models.ImageField(null=True, blank=True)
+    one_mes = models.TextField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.nick_name
+
 class Message(models.Model):
     id = models.UUIDField(default=uuid.uuid4(), primary_key=True)
     owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
@@ -12,3 +24,4 @@ class Message(models.Model):
 
     def __str__(self):
         return str(self.owner) + '_' + str(self.content)
+

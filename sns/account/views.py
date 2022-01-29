@@ -7,19 +7,19 @@ from .forms import CustomUserCreationForm
 
 def login(request):
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
+        form = LoginForm(request.POST)
         if form.is_valid():
-            form.save()
+            # form.save()
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            new_user = authenticate(email=email, password=password)
-            if new_user is not None:
-                dj_login(request, new_user)
+            user = authenticate(email=email, password=password)
+            if user is not None:
+                dj_login(request, user)
                 return redirect('home')
         messages.error(request, 'ログインに失敗しました')
         return render(request, 'page/login.html', {'form': form})
     else:
-        form = CustomUserCreationForm()
+        form = LoginForm()
         return render(request, 'page/login.html', {'form': form})
 
 # class Login(LoginView):
