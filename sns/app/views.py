@@ -46,12 +46,14 @@ def profile(request):
                                 nick_name=nick_name,
                                 icon=icon,
                                 one_mes=one_mes)
+                messages.success(request, 'プロフィール情報を更新しました')
                 return render(request, 'page/profile.html', {'form': form})
             else:
                 Profile.objects.create(user=user,
                                        nick_name=nick_name,
                                        icon=icon,
                                        one_mes=one_mes)
+                messages.success(request, 'プロフィール情報を登録しました')
                 return render(request, 'page/profile.html', {'form': form})
         else:
             form = ProfileForm()

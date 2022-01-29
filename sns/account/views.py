@@ -15,6 +15,7 @@ def login(request):
             user = authenticate(email=email, password=password)
             if user is not None:
                 dj_login(request, user)
+                messages.success(request, 'ようこそ' + str(request.user) + 'さん！')
                 return redirect('home')
         messages.error(request, 'ログインに失敗しました')
         return render(request, 'page/login.html', {'form': form})

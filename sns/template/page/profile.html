@@ -2,17 +2,22 @@
 
 
 {% block main %}
-<h1>profile</h1>
+<div class="d-flex justify-content-center" style="margin-top: 120px;">
 <form method="post">
-    {% csrf_token %}
-    <table>
-    {% for item in form %}
-        <tr>
-            <td>{{ item.label }}</td>
-            <td>{{ item }}</td>
-        </tr>
-    {% endfor %}
-    </table>
-    <input type="submit" class="btn btn-success" value="登録">
+{% csrf_token %}
+  {% for item in form %}
+      <div class="row mb-3 form-group">
+          <label for="{{item.id_for_label}}" class="col-sm-2 col-form-label w-50">{{item.label}}</label>
+          <input
+              type="{{item.field.widget.input_type}}"
+              class="w-200 p-2 form-control"
+              {% if item.field.required %}required{% endif %}
+              name="{{item.name}}"
+              id="{{item.id_for_label}}"
+              value="{{ item.value }}">
+      </div>
+  {% endfor %}
+      <button type="submit" class="btn btn-success">登録</button>
 </form>
+</div>
 {% endblock %}

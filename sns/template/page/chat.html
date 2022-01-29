@@ -1,19 +1,30 @@
 {% extends 'base/base.html' %}
 
-
 {% block main %}
-<h1>chat</h1>
-<h2>{{ request.user }}</h2>
-<div>
+<div class="rounded w-75 mx-auto p-2 d-flex align-items-start flex-column bd-highlight mb-3 border bg-white mt-5" style="height: 450px;">
+  <div class="mb-auto p-2 bd-highlight">
     {% for item in mes %}
         <p>{{ item.owner }}_{{ item.content }}</p>
     {% endfor %}
+  </div>
 </div>
-<div>
-    <form method="post">
-        {% csrf_token %}
-        {{ form }}
-        <input type="submit" class="btn btn-success" value="送信">
-    </form>
+<form method="post">
+<div class="mb-3 p-2 bd-highlight w-75 mx-auto">
+{% csrf_token %}
+  {% for item in form %}
+      <div class="row mb-3 form-group">
+          <label for="{{item.id_for_label}}" class="col-sm-2 col-form-label w-50">{{item.label}}</label>
+          <input
+              type="{{item.field.widget.input_type}}"
+              class="w-200 p-2 form-control"
+              {% if item.field.required %}required{% endif %}
+              name="{{item.name}}"
+              id="{{item.id_for_label}}"
+              rows="3">
+      </div>
+  {% endfor %}
+  <button type="submit" class="btn btn-success">送信</button>
+  <button type="submit" class="btn btn-danger">取消</button>
 </div>
+</form>
 {% endblock %}
