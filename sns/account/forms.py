@@ -8,8 +8,8 @@ class LoginForm(forms.Form):
         for field in self.fields.values():
             field.widget.attrs["class"] = "form-control"
 
-    email = forms.CharField(max_length=25, label='email')
-    password = forms.CharField(max_length=20, label='password', widget=forms.PasswordInput())
+    email = forms.CharField(max_length=25, label='Email')
+    password = forms.CharField(max_length=20, label='Password', widget=forms.PasswordInput())
 
 class SignupForm(forms.ModelForm):
     class Meta:

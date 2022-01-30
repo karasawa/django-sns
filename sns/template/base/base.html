@@ -12,14 +12,14 @@
 {% block header %}
 <nav class="navbar navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand">SNS-DEMO</a>
-    <a class="navbar-brand" href="{% url 'home' %}">HOME</a>
-    <a class="navbar-brand" href="{% url 'chat' %}">CHAT</a>
-    <a class="navbar-brand" href="{% url 'profile' %}">PROFILE</a>
-    <a class="navbar-brand text-danger" href="{% url 'logout' %}">LOGOUT</a>
+    <a class="navbar-brand" style="font-size: 20px;">SNS-DEMO</a>
+    <a class="navbar-brand" href="{% url 'home' %}">ホーム</a>
+    <a class="navbar-brand" href="{% url 'chat' %}">チャット</a>
+    <a class="navbar-brand" href="{% url 'profile' %}">プロフィール</a>
+    <a class="navbar-brand text-danger" href="{% url 'logout' %}">ログアウト</a>
     <form class="d-flex">
-      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success" type="submit">Search</button>
+      <input class="form-control me-2" type="search" style="width: 300px;" placeholder="検索" aria-label="Search">
+      <button class="btn btn-outline-success" style="width: 80px;" type="submit">検索</button>
     </form>
   </div>
 </nav>
