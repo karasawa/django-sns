@@ -14,4 +14,9 @@ urlpatterns = [
     path('friend_promise/<str:pk>/', views.friend_promise, name='friend_promise'),
     path('friend_deny/<str:pk>/', views.friend_deny, name='friend_deny'),
 
+    path('friend_search/', views.friend_search, name='friend_search'),
+    path('friend_request/<str:pk>/', views.friend_request, name='friend_request'),
+
+    path('group/', views.group, name='group'),
+
 ]

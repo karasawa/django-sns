@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
-from .forms import ChatForm, ProfileForm
+from .forms import ChatForm, ProfileForm, GroupForm
 from .models import Message, Profile, Group, Friend
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.contrib.auth import get_user_model
 
-Q(title_startswith='1') | Q(title_endswith='2')
 
 @login_required
 def home(request):
@@ -15,8 +15,6 @@ def home(request):
     deny_friends = Friend.objects.filter(deny_flag=False, promise_flag=False)
     deny_friends = deny_friends.filter(Q(send_from=request.user) | Q(send_to=request.user))
     new_chats = Message.objects.all().order_by('-created_at')[:3]
-    for i in new_chats:
-        print(i.created_at)
     return render(request, 'page/home.html', {'groups': groups,
                                               'friends': friends,
                                               'deny_friends': deny_friends,
@@ -54,6 +52,78 @@ def friend_deny(request, pk):
         return redirect('home')
     else:
         messages.error(request, '申請拒否に失敗しました')
+
+@login_required
+def friend_search(request):
+    if request.method == 'POST':
+        search = request.POST.get('search')
+        if not search:
+            return render(request, 'page/friend_search.html', {})
+        else:
+            users = get_user_model().objects.filter(email__icontains=search)
+            return render(request, 'page/friend_search.html', {'users': users,
+                                                               'search': search})
+    else:
+        return render(request, 'page/friend_search.html', {})
+
+@login_required
+def friend_request(request, pk):
+    instance = get_user_model().objects.get(id=pk)
+    user = get_user_model().objects.get(id=pk).email
+    user_id = get_user_model().objects.get(id=pk).id
+    query1 = Friend.objects.filter(send_from=request.user.id, send_to=user_id)
+    query2 = Friend.objects.filter(send_from=user_id, send_to=request.user.id)
+    if query1:
+        if query1.filter(promise_flag=True):
+            messages.error(request, '既に' + user + 'とはフレンドです')
+            return redirect('friend_search')
+        else:
+            messages.error(request, '既に' + user + 'にはフレンド申請済みです')
+            return redirect('friend_search')
+    elif query2:
+        if query2.filter(promise_flag=True):
+            messages.error(request, '既に' + user + 'とはフレンドです')
+            return redirect('friend_search')
+        else:
+            messages.error(request, '既に' + user + 'からフレンド申請が来ています')
+            return redirect('friend_search')
+    else:
+        Friend.objects.create(send_from=request.user,
+                              send_to=instance,
+                              deny_flag=False,
+                              promise_flag=False)
+        messages.success(request, user + 'へフレンド申請が送信されました')
+        return redirect('home')
+
+
+@login_required
+def group(request):
+    if request.method == 'POST':
+        form = GroupForm(request.POST)
+        owner = request.POST.get('owner')
+        owner = get_user_model().objects.filter(email__exact=owner)
+        title = request.POST.get('title')
+        icon = request.POST.get('icon')
+        if owner:
+            owner = owner[0]
+            if form.is_valid:
+                Group.objects.create(owner=owner,
+                                     # member=owner,
+                                     title=title,
+                                     icon=icon).member.add(owner)
+                messages.success(request, title + 'を作成しました')
+                form = GroupForm()
+                return render(request, 'page/group.html', {'form': form})
+            else:
+                messages.error(request, 'グループの作成に失敗しました')
+                return render(request, 'page/group.html', {'form': form})
+        else:
+            messages.error(request, 'オーナーには実在するユーザーを入力してください')
+            return render(request, 'page/group.html', {'form': form})
+    else:
+        form = GroupForm()
+        return render(request, 'page/group.html', {'form': form})
+
 
 @login_required
 def chat(request):

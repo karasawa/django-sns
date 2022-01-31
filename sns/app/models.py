@@ -18,7 +18,10 @@ class Profile(models.Model):
 class Group(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    member = models.ManyToManyField(get_user_model(), related_name='group_owner')
     title = models.CharField(max_length=30)
+    icon = models.ImageField(null=True, blank=True)
+    # created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
@@ -44,6 +47,7 @@ class Friend(models.Model):
     send_to = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     deny_flag = models.BooleanField(default=False)
     promise_flag = models.BooleanField(default=False)
+    # created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
         return str(self.send_from) + '----->' + str(self.send_to)
