@@ -9,7 +9,8 @@ from django.contrib.auth import get_user_model
 
 @login_required
 def home(request):
-    groups = Group.objects.all()
+    user = get_user_model().objects.get(email=request.user)
+    groups = user.group_set.all()
     friends = Friend.objects.filter(promise_flag=True)
     friends = friends.filter(Q(send_from=request.user) | Q(send_to=request.user))
     deny_friends = Friend.objects.filter(deny_flag=False, promise_flag=False)
@@ -21,7 +22,7 @@ def home(request):
                                               'new_chats': new_chats})
 
 @login_required
-def group_create(request):
+def group(request):
     print('aaa')
     return redirect('home')
 
@@ -97,7 +98,7 @@ def friend_request(request, pk):
 
 
 @login_required
-def group(request):
+def group_create(request):
     if request.method == 'POST':
         form = GroupForm(request.POST)
         owner = request.POST.get('owner')
@@ -124,6 +125,30 @@ def group(request):
         form = GroupForm()
         return render(request, 'page/group.html', {'form': form})
 
+@login_required
+def group_chat(request, pk):
+    request.session['group_pk'] = pk
+    group = Group.objects.get(id=pk)
+    profile = Profile.objects.filter(user=request.user)
+    if request.method == 'POST':
+        if profile:
+            form = ChatForm(request.POST)
+            content = request.POST.get('content')
+            if form.is_valid():
+                Message.objects.create(owner=request.user,
+                                       content=content,
+                                       group=group,
+                                       )
+            mes = Message.objects.filter(group=group)
+            return render(request, 'page/chat.html', {'form': ChatForm(request.POST),
+                                                      'mes': mes})
+        else:
+            messages.error(request, 'プロフィール情報を登録してから、チャットに参加しましょう')
+            return redirect('chat')
+    else:
+        mes = Message.objects.filter(group=group)
+        return render(request, 'page/chat.html', {'form': ChatForm(),
+                                                  'mes': mes})
 
 @login_required
 def chat(request):
@@ -150,14 +175,16 @@ def chat(request):
 
 @login_required
 def chat_delete(request):
-    # instance = Message.objects.latest('created_at')
+    pk = request.session.get('group_pk')
+    group = Group.objects.get(id=pk).title
+    print(group)
     instance = Message.objects.filter(owner=request.user).order_by('-created_at')[0]
     if instance.owner == request.user:
         instance.delete()
-        return redirect('chat')
+        return redirect('/app/group_chat/' + pk + '/')
     else:
         messages.error(request, '削除期限が過ぎています')
-        return redirect('chat')
+        return redirect('/app/group_chat/' + pk + '/')
 
 
 @login_required
