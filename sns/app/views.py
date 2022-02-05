@@ -10,7 +10,8 @@ from django.contrib.auth import get_user_model
 @login_required
 def home(request):
     user = get_user_model().objects.get(email=request.user)
-    groups = user.group_set.all()
+    groups = user.group_member.all()
+    print(groups)
     friends = Friend.objects.filter(promise_flag=True)
     friends = friends.filter(Q(send_from=request.user) | Q(send_to=request.user))
     deny_friends = Friend.objects.filter(deny_flag=False, promise_flag=False)
@@ -56,14 +57,30 @@ def friend_deny(request, pk):
 
 @login_required
 def friend_search(request):
+    promised_friend_list = []
+    waiting_approve_list = []
     if request.method == 'POST':
         search = request.POST.get('search')
         if not search:
             return render(request, 'page/friend_search.html', {})
         else:
             users = get_user_model().objects.filter(email__icontains=search)
+            for user in users:
+                if Friend.objects.filter(promise_flag=True, send_from=request.user, send_to=user.id):
+                    promised_friend_list.append(user)
+                elif Friend.objects.filter(promise_flag=True, send_from=user.id, send_to=request.user):
+                    promised_friend_list.append(user)
+                else:
+                    if Friend.objects.filter(promise_flag=False, deny_flag=False, send_from=request.user, send_to=user.id):
+                        waiting_approve_list.append(user)
+                    elif Friend.objects.filter(promise_flag=False, deny_flag=False, send_from=user.id, send_to=request.user):
+                        waiting_approve_list.append(user)
+                    else:
+                        pass
             return render(request, 'page/friend_search.html', {'users': users,
-                                                               'search': search})
+                                                               'search': search,
+                                                               'promised_friend_list': promised_friend_list,
+                                                               'waiting_approve_list': waiting_approve_list})
     else:
         return render(request, 'page/friend_search.html', {})
 
@@ -124,6 +141,47 @@ def group_create(request):
     else:
         form = GroupForm()
         return render(request, 'page/group.html', {'form': form})
+
+
+@login_required
+def group_invite(request):
+    promised_friend_list = []
+    if request.method == 'POST':
+        search = request.POST.get('search')
+        if not search:
+            return render(request, 'page/friend_search.html', {})
+        else:
+            users = get_user_model().objects.filter(email__icontains=search)
+            for user in users:
+                if Friend.objects.filter(promise_flag=True, send_from=request.user, send_to=user.id):
+                    promised_friend_list.append(user)
+                elif Friend.objects.filter(promise_flag=True, send_from=user.id, send_to=request.user):
+                    promised_friend_list.append(user)
+                else:
+                    pass
+            return render(request, 'page/friend_search.html', {'users': users,
+                                                               'search': search,
+                                                               'promised_friend_list': promised_friend_list})
+    else:
+        return render(request, 'page/friend_search.html', {})
+
+
+@login_required
+def group_invite_request(request, pk):
+    group_id = request.session['group_pk']
+    instance = get_user_model().objects.get(id=pk)
+    user = instance.email
+    user_id = instance.id
+    group = Group.objects.get(id=group_id)
+    query1 = group.member.all()
+    if user_id in query1:
+        messages.error(request, user + 'は既にグループに参加しています')
+        redirect('group_invite')
+    else:
+        group.member.add(user_id)
+        messages.success(request, user + 'を' + group.title + 'に招待しました')
+        redirect('group_invite')
+
 
 @login_required
 def group_chat(request, pk):

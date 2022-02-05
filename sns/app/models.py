@@ -17,8 +17,8 @@ class Profile(models.Model):
 
 class Group(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
-    owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    member = models.ManyToManyField(get_user_model(), related_name='group_owner')
+    owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,  related_name='group_owner')
+    member = models.ManyToManyField(get_user_model(), related_name='group_member')
     title = models.CharField(max_length=30)
     icon = models.ImageField(null=True, blank=True)
     # created_at = models.DateTimeField(auto_now_add=True)
