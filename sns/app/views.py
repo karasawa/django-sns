@@ -179,14 +179,48 @@ def group_invite_request(request, pk):
     else:
         group.member.add(user_id)
         messages.success(request, user + 'を' + group.title + 'に招待しました')
-        redirect('group_invite')
-    return redirect('group_invite')
+        return redirect('group_invite')
 
+
+@login_required
+def friend_chat(request, pk):
+    request.session['friend_pk'] = pk
+    user = get_user_model().objects.get(email=request.user)
+    friend = Friend.objects.get(id=pk)
+    all_group = user.group_member.all()
+    all_friend = Friend.objects.filter(Q(send_from=user.id) | Q(send_to=user.id))
+    all_friend = all_friend.filter(promise_flag=True)
+    profile = Profile.objects.filter(user=request.user)
+    if request.method == 'POST':
+        if profile:
+            form = ChatForm(request.POST)
+            content = request.POST.get('content')
+            if form.is_valid():
+                Message.objects.create(owner=request.user,
+                                       content=content,
+                                       friend=friend.id
+                                       )
+            mes = Message.objects.filter(friend=friend.id)
+            return render(request, 'page/chat.html', {'form': ChatForm(request.POST),
+                                                      'mes': mes,
+                                                      'all_group': all_group,
+                                                      'all_friend': all_friend})
+        else:
+            messages.error(request, 'プロフィール情報を登録してから、チャットに参加しましょう')
+            return redirect('friend_chat')
+    else:
+        mes = Message.objects.filter(friend=friend.id)
+        return render(request, 'page/chat.html', {'form': ChatForm(),
+                                                  'mes': mes,
+                                                  'all_group': all_group,
+                                                  'all_friend': all_friend})
 
 @login_required
 def group_chat(request, pk):
     request.session['group_pk'] = pk
     user = get_user_model().objects.get(email=request.user)
+    all_friend = Friend.objects.filter(Q(send_from=user.id) | Q(send_to=user.id))
+    all_friend = all_friend.filter(promise_flag=True)
     all_group = user.group_member.all()
     group = Group.objects.get(id=pk)
     profile = Profile.objects.filter(user=request.user)
@@ -202,15 +236,18 @@ def group_chat(request, pk):
             mes = Message.objects.filter(group=group)
             return render(request, 'page/chat.html', {'form': ChatForm(request.POST),
                                                       'mes': mes,
-                                                      'all_group': all_group})
+                                                      'all_group': all_group,
+                                                      'all_friend': all_friend})
         else:
             messages.error(request, 'プロフィール情報を登録してから、チャットに参加しましょう')
-            return redirect('chat')
+            return redirect('group_chat')
     else:
         mes = Message.objects.filter(group=group)
         return render(request, 'page/chat.html', {'form': ChatForm(),
                                                   'mes': mes,
-                                                  'all_group': all_group})
+                                                  'all_group': all_group,
+                                                  'all_friend': all_friend})
+
 
 @login_required
 def chat(request):

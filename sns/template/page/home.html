@@ -28,14 +28,14 @@
                 {% for friend in friends %}
                     {% if friend.send_to == request.user %}
                     <div class="d-flex flex-row align-items-center">
-                        <a href="#" class="text-decoration-none text-black p-2">
+                        <a href="{% url 'friend_chat' pk=friend.id %}" class="text-decoration-none text-black p-2">
                             <div class="rounded-3 bg-success p-2 text-white bg-opacity-75"style="text-align: center;max-width: 300px; min-width: 170px;">{{ friend.send_from }}</div>
                         </a>
                         <a class="btn btn-danger text-decoration-none text-white" href="{% url 'friend_delete' pk=friend.id %}">削除</a>
                     </div>
                     {% else %}
                     <div class="d-flex flex-row align-items-center">
-                        <a href="#" class="text-decoration-none text-black p-2">
+                        <a href="{% url 'friend_chat' pk=friend.id %}" class="text-decoration-none text-black p-2">
                             <div class="rounded-3 bg-success p-2 text-white bg-opacity-75"style="text-align: center;max-width: 300px; min-width: 170px;">{{ friend.send_to }}</div>
                         </a>
                         <a class="btn btn-danger text-decoration-none text-white" href="{% url 'friend_delete' pk=friend.id %}">削除</a>

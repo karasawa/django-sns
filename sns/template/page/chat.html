@@ -1,6 +1,7 @@
 {% extends 'base/base.html' %}
 
 {% block main %}
+{% if 'friend_chat' in request.path %}
 <div class="d-flex flex-column" style="position: absolute;top: 110px;align-items: center;">
     <h4 class="rounded-3 bg-black p-2 text-white bg-opacity-75" style="text-align: center;max-width: 300px; min-width: 170px;">グループ</h4>
     {% for target in all_group %}
@@ -9,8 +10,22 @@
         </a>
     {% endfor %}
 </div>
+<div class="d-flex flex-column" style="position: absolute;top: 110px;right: 7px;align-items: center;">
+    <h4 class="rounded-3 bg-black p-2 text-white bg-opacity-75" style="text-align: center;max-width: 300px; min-width: 170px;">フレンド</h4>
+    {% for target in all_friend %}
+        {% if target.send_to == request.user %}
+            <a href="{% url 'friend_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
+                <div class="rounded-3 bg-success p-2 text-white bg-opacity-50"style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.send_from }}</div>
+            </a>
+        {% elif target.send_from == request.user %}
+            <a href="{% url 'friend_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
+                <div class="rounded-3 bg-success p-2 text-white bg-opacity-50"style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.send_to }}</div>
+            </a>
+        {% endif %}
+    {% endfor %}
+</div>
 <div id="scroll-box" class="rounded w-75 mx-auto p-2 d-flex align-items-start flex-column bd-highlight mb-2 border mt-5 bg-white" style="height: 450px;">
-    <div id="scroll-contents" class="mb-auto p-2 bd-highlight" style="height: 1000px;display: block;">
+    <div class="mb-auto p-2 bd-highlight" style="height: 1000px;display: block;">
     {% for item in mes %}
         {% if item.owner == request.user %}
             <div class="rounded-3 bg-success p-2 text-white bg-opacity-75 m-4"style="position: relative;left: 660px; max-width: 350px; min-width: 350px;">{{ item.owner }}_{{ item.content }}</div>
@@ -40,4 +55,59 @@
     <a id="button" class="btn btn-success text-decoration-none text-white float-end" href="{% url 'group_invite' %}">招待</a>
 </div>
 </form>
+{% elif 'group_chat' in request.path %}
+<div class="d-flex flex-column" style="position: absolute;top: 110px;align-items: center;">
+    <h4 class="rounded-3 bg-black p-2 text-white bg-opacity-75" style="text-align: center;max-width: 300px; min-width: 170px;">グループ</h4>
+    {% for target in all_group %}
+        <a href="{% url 'group_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
+            <div class="rounded-3 bg-success p-2 text-white bg-opacity-50"style="text-align: center;max-width: 300px; min-width: 170px;">{{ target }}</div>
+        </a>
+    {% endfor %}
+</div>
+<div class="d-flex flex-column" style="position: absolute;top: 110px;right: 7px;align-items: center;">
+    <h4 class="rounded-3 bg-black p-2 text-white bg-opacity-75" style="text-align: center;max-width: 300px; min-width: 170px;">フレンド</h4>
+    {% for target in all_friend %}
+        {% if target.send_to == request.user %}
+            <a href="{% url 'friend_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
+                <div class="rounded-3 bg-success p-2 text-white bg-opacity-50"style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.send_from }}</div>
+            </a>
+        {% elif target.send_from == request.user %}
+            <a href="{% url 'friend_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
+                <div class="rounded-3 bg-success p-2 text-white bg-opacity-50"style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.send_to }}</div>
+            </a>
+        {% endif %}
+    {% endfor %}
+</div>
+<div id="scroll-box" class="rounded w-75 mx-auto p-2 d-flex align-items-start flex-column bd-highlight mb-2 border mt-5 bg-white" style="height: 450px;">
+    <div class="mb-auto p-2 bd-highlight" style="height: 1000px;display: block;">
+    {% for item in mes %}
+        {% if item.owner == request.user %}
+            <div class="rounded-3 bg-success p-2 text-white bg-opacity-75 m-4"style="position: relative;left: 660px; max-width: 350px; min-width: 350px;">{{ item.owner }}_{{ item.content }}</div>
+        {% else %}
+            <div class="rounded-3 bg-danger p-2 text-white bg-opacity-75 m-4" style="position: relative;left: 50px;max-width: 350px; min-width: 350px;">{{ item.owner }}_{{ item.content }}</div>
+        {% endif %}
+    {% endfor %}
+  </div>
+</div>
+<form method="post">
+<div class="mb-3 p-2 bd-highlight w-75 mx-auto" style="margin-top: 30px;position: relative;bottom: 18px;">
+{% csrf_token %}
+  {% for item in form %}
+      <div class="row mb-2 form-group">
+          <input
+              type="{{item.field.widget.input_type}}"
+              class="w-200 p-2 form-control"
+              {% if item.field.required %}required{% endif %}
+              name="{{item.name}}"
+              id="{{item.id_for_label}}"
+              placeholder="メッセージを入力"
+              rows="3">
+      </div>
+  {% endfor %}
+    <button type="submit" class="btn btn-success">送信</button>
+    <a class="btn btn-danger text-decoration-none text-white" href="{% url 'chat_delete' %}">取消</a>
+    <a class="btn btn-success text-decoration-none text-white float-end" href="{% url 'group_invite' %}">招待</a>
+</div>
+</form>
+{% endif %}
 {% endblock %}

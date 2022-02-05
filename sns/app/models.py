@@ -30,6 +30,7 @@ class Group(models.Model):
 class Message(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    friend = models.CharField(max_length=30, null=True, blank=True)
     content = models.TextField(max_length=1000)
     good_count = models.PositiveIntegerField(default=0)
     share_count = models.PositiveIntegerField(default=0)
