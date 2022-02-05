@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 from django.contrib.messages import constants as message_constants
 
@@ -144,3 +145,11 @@ MESSAGE_TAGS = {
     message_constants.INFO: 'alert alert-info',
     message_constants.DEBUG: 'alert alert-debug',
 }
+
+STATIC_URL = '/static/'
+
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
