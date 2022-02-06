@@ -6,7 +6,14 @@
     <h4 class="rounded-3 bg-black p-2 text-white bg-opacity-75" style="text-align: center;max-width: 300px; min-width: 170px;">グループ</h4>
     {% for target in all_group %}
         <a href="{% url 'group_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
-            <div class="rounded-3 bg-success p-2 text-white bg-opacity-50"style="text-align: center;max-width: 300px; min-width: 170px;">{{ target }}</div>
+            <div>
+                <div class="d-flex flex-row rounded-3 bg-success p-2 text-white bg-opacity-50 justify-content-center"style="text-align: center;max-width: 300px; min-width: 170px;">
+                    {{ target }}
+<!--                    <div class="d-flex flex-row">-->
+<!--                        <button type="submit" style="width: 8px;height: 15px;border-radius: 100%;"></button>-->
+<!--                    </div>-->
+                </div>
+            </div>
         </a>
     {% endfor %}
 </div>
@@ -14,13 +21,25 @@
     <h4 class="rounded-3 bg-black p-2 text-white bg-opacity-75" style="text-align: center;max-width: 300px; min-width: 170px;">フレンド</h4>
     {% for target in all_friend %}
         {% if target.send_to == request.user %}
-            <a href="{% url 'friend_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
-                <div class="rounded-3 bg-success p-2 text-white bg-opacity-50"style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.send_from }}</div>
-            </a>
+            {% if target == in_speaking_friend %}
+                <a href="{% url 'friend_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
+                    <div class="rounded-3 bg-success p-2 text-danger" style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.send_from }}</div>
+                </a>
+            {% else %}
+                <a href="{% url 'friend_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
+                    <div class="rounded-3 bg-success p-2 text-white bg-opacity-50" style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.send_from }}</div>
+                </a>
+            {% endif %}
         {% elif target.send_from == request.user %}
-            <a href="{% url 'friend_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
-                <div class="rounded-3 bg-success p-2 text-white bg-opacity-50"style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.send_to }}</div>
-            </a>
+            {% if target == in_speaking_friend %}
+                <a href="{% url 'friend_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
+                    <div class="rounded-3 bg-success p-2 text-danger" style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.send_to }}</div>
+                </a>
+            {% else %}
+                <a href="{% url 'friend_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
+                    <div class="rounded-3 bg-success p-2 text-white bg-opacity-50" style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.send_to }}</div>
+                </a>
+            {% endif %}
         {% endif %}
     {% endfor %}
 </div>
@@ -28,9 +47,23 @@
     <div class="mb-auto p-2 bd-highlight" style="height: 1000px;display: block;">
     {% for item in mes %}
         {% if item.owner == request.user %}
-            <div class="rounded-3 bg-success p-2 text-white bg-opacity-75 m-4"style="position: relative;left: 660px; max-width: 350px; min-width: 350px;">{{ item.owner }}_{{ item.content }}</div>
+            <div class="d-flex flex-row align-items-center" style="position: relative;left: 660px;">
+                <div class="rounded-3 bg-success p-2 text-white bg-opacity-75 m-4" style="max-width: 350px; min-width: 350px;">
+                    {{ item.content }}
+                </div>
+                <div>
+                    <img src="/media/images/{{ profile.icon }}" style="width: 30px;height: 25px;border-radius: 100%;"/>
+                </div>
+            </div>
         {% else %}
-            <div class="rounded-3 bg-danger p-2 text-white bg-opacity-75 m-4" style="position: relative;left: 50px;max-width: 350px; min-width: 350px;">{{ item.owner }}_{{ item.content }}</div>
+            <div class="d-flex flex-row align-items-center" style="position: relative;left: 20px;">
+                <div>
+                    <img src="/media/images/{{ friend_profile.icon }}" style="width: 30px;height: 25px;border-radius: 100%;"/>
+                </div>
+                <div class="rounded-3 bg-danger p-2 text-white bg-opacity-75 m-4" style="position: relative;left: 0px;max-width: 350px; min-width: 350px;">
+                    {{ item.content }}
+                </div>
+            </div>
         {% endif %}
     {% endfor %}
   </div>
@@ -51,17 +84,22 @@
       </div>
   {% endfor %}
     <button type="submit" class="btn btn-success">送信</button>
-    <a class="btn btn-danger text-decoration-none text-white" href="{% url 'chat_delete' %}">取消</a>
-    <a id="button" class="btn btn-success text-decoration-none text-white float-end" href="{% url 'group_invite' %}">招待</a>
+    <a class="btn btn-danger text-decoration-none text-white" href="{% url 'friend_chat_delete' %}">取消</a>
 </div>
 </form>
 {% elif 'group_chat' in request.path %}
 <div class="d-flex flex-column" style="position: absolute;top: 110px;align-items: center;">
     <h4 class="rounded-3 bg-black p-2 text-white bg-opacity-75" style="text-align: center;max-width: 300px; min-width: 170px;">グループ</h4>
     {% for target in all_group %}
-        <a href="{% url 'group_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
-            <div class="rounded-3 bg-success p-2 text-white bg-opacity-50"style="text-align: center;max-width: 300px; min-width: 170px;">{{ target }}</div>
-        </a>
+        {% if target == in_speaking_group %}
+            <a href="{% url 'group_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
+                <div class="rounded-3 bg-success p-2 text-danger" style="text-align: center;max-width: 300px; min-width: 170px;">{{ target }}</div>
+            </a>
+        {% else %}
+            <a href="{% url 'group_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
+                <div class="rounded-3 bg-success p-2 text-white bg-opacity-50" style="text-align: center;max-width: 300px; min-width: 170px;">{{ target }}</div>
+            </a>
+        {% endif %}
     {% endfor %}
 </div>
 <div class="d-flex flex-column" style="position: absolute;top: 110px;right: 7px;align-items: center;">
@@ -82,9 +120,9 @@
     <div class="mb-auto p-2 bd-highlight" style="height: 1000px;display: block;">
     {% for item in mes %}
         {% if item.owner == request.user %}
-            <div class="rounded-3 bg-success p-2 text-white bg-opacity-75 m-4"style="position: relative;left: 660px; max-width: 350px; min-width: 350px;">{{ item.owner }}_{{ item.content }}</div>
+            <div class="rounded-3 bg-success p-2 text-white bg-opacity-75 m-4"style="position: relative;left: 660px; max-width: 350px; min-width: 350px;">{{ item.content }}</div>
         {% else %}
-            <div class="rounded-3 bg-danger p-2 text-white bg-opacity-75 m-4" style="position: relative;left: 50px;max-width: 350px; min-width: 350px;">{{ item.owner }}_{{ item.content }}</div>
+            <div class="rounded-3 bg-danger p-2 text-white bg-opacity-75 m-4" style="position: relative;left: 50px;max-width: 350px; min-width: 350px;">{{ item.content }}</div>
         {% endif %}
     {% endfor %}
   </div>
@@ -105,7 +143,7 @@
       </div>
   {% endfor %}
     <button type="submit" class="btn btn-success">送信</button>
-    <a class="btn btn-danger text-decoration-none text-white" href="{% url 'chat_delete' %}">取消</a>
+    <a class="btn btn-danger text-decoration-none text-white" href="{% url 'group_chat_delete' %}">取消</a>
     <a class="btn btn-success text-decoration-none text-white float-end" href="{% url 'group_invite' %}">招待</a>
 </div>
 </form>

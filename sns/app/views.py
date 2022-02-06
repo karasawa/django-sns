@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib.auth import get_user_model
+from django.conf import settings
 
 
 @login_required
@@ -15,7 +16,7 @@ def home(request):
     friends = friends.filter(Q(send_from=request.user) | Q(send_to=request.user))
     deny_friends = Friend.objects.filter(deny_flag=False, promise_flag=False)
     deny_friends = deny_friends.filter(Q(send_from=request.user) | Q(send_to=request.user))
-    new_chats = Message.objects.all().order_by('-created_at')[:5]
+    new_chats = Message.objects.filter(friend=request.user).order_by('-created_at')[:5]
     return render(request, 'page/home.html', {'groups': groups,
                                               'friends': friends,
                                               'deny_friends': deny_friends,
@@ -187,10 +188,17 @@ def friend_chat(request, pk):
     request.session['friend_pk'] = pk
     user = get_user_model().objects.get(email=request.user)
     friend = Friend.objects.get(id=pk)
+    in_speaking_friend = friend
     all_group = user.group_member.all()
     all_friend = Friend.objects.filter(Q(send_from=user.id) | Q(send_to=user.id))
     all_friend = all_friend.filter(promise_flag=True)
     profile = Profile.objects.filter(user=request.user)
+    if friend.send_from != request.user:
+        friend_profile = Profile.objects.filter(user=friend.send_from)
+    else:
+        friend_profile = Profile.objects.filter(user=friend.send_to)
+    print(friend_profile)
+    print(profile)
     if request.method == 'POST':
         if profile:
             form = ChatForm(request.POST)
@@ -204,6 +212,7 @@ def friend_chat(request, pk):
             return render(request, 'page/chat.html', {'form': ChatForm(request.POST),
                                                       'mes': mes,
                                                       'all_group': all_group,
+                                                      'in_speaking_friend': in_speaking_friend,
                                                       'all_friend': all_friend})
         else:
             messages.error(request, 'プロフィール情報を登録してから、チャットに参加しましょう')
@@ -213,7 +222,10 @@ def friend_chat(request, pk):
         return render(request, 'page/chat.html', {'form': ChatForm(),
                                                   'mes': mes,
                                                   'all_group': all_group,
-                                                  'all_friend': all_friend})
+                                                  'in_speaking_friend': in_speaking_friend,
+                                                  'all_friend': all_friend,
+                                                  'profile': profile[0],
+                                                  'friend_profile': friend_profile[0]})
 
 @login_required
 def group_chat(request, pk):
@@ -223,6 +235,7 @@ def group_chat(request, pk):
     all_friend = all_friend.filter(promise_flag=True)
     all_group = user.group_member.all()
     group = Group.objects.get(id=pk)
+    in_speaking_group = group
     profile = Profile.objects.filter(user=request.user)
     if request.method == 'POST':
         if profile:
@@ -237,7 +250,8 @@ def group_chat(request, pk):
             return render(request, 'page/chat.html', {'form': ChatForm(request.POST),
                                                       'mes': mes,
                                                       'all_group': all_group,
-                                                      'all_friend': all_friend})
+                                                      'all_friend': all_friend,
+                                                      'in_speaking_group': in_speaking_group})
         else:
             messages.error(request, 'プロフィール情報を登録してから、チャットに参加しましょう')
             return redirect('group_chat')
@@ -246,7 +260,8 @@ def group_chat(request, pk):
         return render(request, 'page/chat.html', {'form': ChatForm(),
                                                   'mes': mes,
                                                   'all_group': all_group,
-                                                  'all_friend': all_friend})
+                                                  'all_friend': all_friend,
+                                                  'in_speaking_group': in_speaking_group})
 
 
 @login_required
@@ -273,7 +288,24 @@ def chat(request):
 
 
 @login_required
-def chat_delete(request):
+def friend_chat_delete(request):
+    pk = request.session.get('friend_pk')
+    friend = Friend.objects.get(id=pk)
+    instance = Message.objects.filter(owner=request.user, friend=friend.id).order_by('-created_at')
+    if len(instance) == 0:
+        messages.error(request, 'あなたのメッセージがありません')
+        return redirect('/app/friend_chat/' + pk + '/')
+    else:
+        if instance[0].owner == request.user:
+            instance[0].delete()
+            return redirect('/app/friend_chat/' + pk + '/')
+        else:
+            messages.error(request, '削除期限が過ぎています')
+            return redirect('/app/friend_chat/' + pk + '/')
+
+
+@login_required
+def group_chat_delete(request):
     pk = request.session.get('group_pk')
     group = Group.objects.get(id=pk)
     instance = Message.objects.filter(owner=request.user, group=group.id).order_by('-created_at')
@@ -293,7 +325,7 @@ def chat_delete(request):
 def profile(request):
     instance = Profile.objects.filter(user=request.user)
     if request.method == 'POST':
-        form = ProfileForm(request.POST)
+        form = ProfileForm(request.POST, request.FILES)
         user = request.user
         nick_name = request.POST.get('nick_name')
         icon = request.POST.get('icon')
@@ -305,26 +337,38 @@ def profile(request):
                                 icon=icon,
                                 one_mes=one_mes)
                 messages.success(request, 'プロフィール情報を更新しました')
-                return render(request, 'page/profile.html', {'form': form})
+                instance = Profile.objects.filter(user=request.user)
+                print(instance[0].icon)
+                url = settings.MEDIA_URL + 'images/' + str(instance[0].icon)
+                print(url)
+                return render(request, 'page/profile.html', {'form': form,
+                                                             'url': url})
             else:
                 Profile.objects.create(user=user,
                                        nick_name=nick_name,
                                        icon=icon,
                                        one_mes=one_mes)
+                instance = Profile.objects.filter(user=request.user)
+                url = settings.MEDIA_URL + 'images/' + str(instance[0].icon)
                 messages.success(request, 'プロフィール情報を登録しました')
-                return render(request, 'page/profile.html', {'form': form})
+                return render(request, 'page/profile.html', {'form': form,
+                                                             'url': url})
         else:
             form = ProfileForm()
             messages.error(request, '登録に失敗しました')
-            return render(request, 'page/profile.html', {'form': form})
+            return render(request, 'page/profile.html', {'form': form,
+                                                         'url': '/media/images/unknown.jpeg'})
     else:
         if instance:
             data = instance[0]
             form = ProfileForm(initial={'nick_name': data.nick_name,
                                         'icon': data.icon,
                                         'one_mes': data.one_mes})
-            return render(request, 'page/profile.html', {'form': form})
+            url = settings.MEDIA_URL + 'images/' + str(data.icon)
+            return render(request, 'page/profile.html', {'form': form,
+                                                         'url': url})
         else:
             form = ProfileForm()
-            return render(request, 'page/profile.html', {'form': form})
+            return render(request, 'page/profile.html', {'form': form,
+                                                         'url': '/media/images/unknown.jpeg'})
 
