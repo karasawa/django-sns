@@ -329,6 +329,7 @@ def profile(request):
         user = request.user
         nick_name = request.POST.get('nick_name')
         icon = request.POST.get('icon')
+        print(icon)
         one_mes = request.POST.get('one_mes')
         if form.is_valid():
             if instance:
