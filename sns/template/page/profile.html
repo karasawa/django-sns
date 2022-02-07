@@ -12,9 +12,9 @@
   {% for item in form %}
       <div class="row mb-3 form-group">
           <label for="{{item.id_for_label}}" class="col-sm-2 col-form-label w-50">{{item.label}}</label>
-          {% if item.name == 'icon' %}
               <input
                   type="{{item.field.widget.input_type}}"
+                  style="background-color: #FFF9E6;"
                   class="w-200 p-2 form-control"
                   {% if item.field.required %}required{% endif %}
                   name="{{item.name}}"
@@ -24,20 +24,6 @@
                   {% else %}
                   value="{{ item.value }}"
                   {% endif %}>
-          {% else %}
-              <input
-                  type="{{item.field.widget.input_type}}"
-                  class="w-200 p-2 form-control"
-                  {% if item.field.required %}required{% endif %}
-                  name="{{item.name}}"
-                  id="{{item.id_for_label}}"
-                  {% if item.value is None %}
-                  value=""
-                  {% else %}
-                  value="{{ item.value }}"
-                  {% endif %}>
-          {% endif %}
-
       </div>
   {% endfor %}
       <button type="submit" class="btn btn-success">登録</button>

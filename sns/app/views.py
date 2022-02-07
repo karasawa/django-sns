@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.conf import settings
+import os
 
 
 @login_required
@@ -126,7 +127,6 @@ def group_create(request):
             owner = owner[0]
             if form.is_valid:
                 Group.objects.create(owner=owner,
-                                     # member=owner,
                                      title=title,
                                      icon=icon).member.add(owner)
                 messages.success(request, title + 'を作成しました')
@@ -197,8 +197,6 @@ def friend_chat(request, pk):
         friend_profile = Profile.objects.filter(user=friend.send_from)
     else:
         friend_profile = Profile.objects.filter(user=friend.send_to)
-    print(friend_profile)
-    print(profile)
     if request.method == 'POST':
         if profile:
             form = ChatForm(request.POST)
@@ -329,7 +327,6 @@ def profile(request):
         user = request.user
         nick_name = request.POST.get('nick_name')
         icon = request.POST.get('icon')
-        print(icon)
         one_mes = request.POST.get('one_mes')
         if form.is_valid():
             if instance:
@@ -339,9 +336,9 @@ def profile(request):
                                 one_mes=one_mes)
                 messages.success(request, 'プロフィール情報を更新しました')
                 instance = Profile.objects.filter(user=request.user)
-                print(instance[0].icon)
                 url = settings.MEDIA_URL + 'images/' + str(instance[0].icon)
-                print(url)
+                if os.path.exists(str(url)) is False:
+                    url = '/media/images/unknown.jpeg'
                 return render(request, 'page/profile.html', {'form': form,
                                                              'url': url})
             else:
@@ -366,6 +363,8 @@ def profile(request):
                                         'icon': data.icon,
                                         'one_mes': data.one_mes})
             url = settings.MEDIA_URL + 'images/' + str(data.icon)
+            if os.path.exists(str(url)) is False:
+                url = '/media/images/unknown.jpeg'
             return render(request, 'page/profile.html', {'form': form,
                                                          'url': url})
         else:

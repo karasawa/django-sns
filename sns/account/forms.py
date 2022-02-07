@@ -11,10 +11,10 @@ class LoginForm(forms.Form):
     email = forms.CharField(max_length=25, label='Email')
     password = forms.CharField(max_length=20, label='Password', widget=forms.PasswordInput())
 
-class SignupForm(forms.ModelForm):
-    class Meta:
-        model = get_user_model()
-        fields = ['email', 'password']
+class SignupForm(forms.Form):
+    email = forms.EmailField(max_length=25, label='Email')
+    password1 = forms.CharField(max_length=20, label='Password1', widget=forms.PasswordInput())
+    password2 = forms.CharField(max_length=20, label='Password2', widget=forms.PasswordInput())
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:

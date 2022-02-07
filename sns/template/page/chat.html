@@ -43,7 +43,7 @@
         {% endif %}
     {% endfor %}
 </div>
-<div id="scroll-box" class="rounded w-75 mx-auto p-2 d-flex align-items-start flex-column bd-highlight mb-2 border mt-5 bg-white" style="height: 450px;">
+<div id="scroll-box" class="rounded w-75 mx-auto p-2 d-flex align-items-start flex-column bd-highlight mb-2 border mt-5" style="background-color: #FFF9E6;height: 450px;">
     <div class="mb-auto p-2 bd-highlight" style="height: 1000px;display: block;">
     {% for item in mes %}
         {% if item.owner == request.user %}
@@ -80,6 +80,7 @@
               name="{{item.name}}"
               id="{{item.id_for_label}}"
               placeholder="メッセージを入力"
+              style="background-color: #FFF9E6;"
               rows="3">
       </div>
   {% endfor %}
@@ -116,7 +117,7 @@
         {% endif %}
     {% endfor %}
 </div>
-<div id="scroll-box" class="rounded w-75 mx-auto p-2 d-flex align-items-start flex-column bd-highlight mb-2 border mt-5 bg-white" style="height: 450px;">
+<div id="scroll-box" class="rounded w-75 mx-auto p-2 d-flex align-items-start flex-column bd-highlight mb-2 border mt-5" style="background-color: #FFF9E6;height: 450px;">
     <div class="mb-auto p-2 bd-highlight" style="height: 1000px;display: block;">
     {% for item in mes %}
         {% if item.owner == request.user %}
@@ -139,6 +140,7 @@
               name="{{item.name}}"
               id="{{item.id_for_label}}"
               placeholder="メッセージを入力"
+              style="background-color: #FFF9E6;"
               rows="3">
       </div>
   {% endfor %}
