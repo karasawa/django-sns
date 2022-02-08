@@ -337,8 +337,10 @@ def profile(request):
                 messages.success(request, 'プロフィール情報を更新しました')
                 instance = Profile.objects.filter(user=request.user)
                 url = settings.MEDIA_URL + 'images/' + str(instance[0].icon)
-                if os.path.exists(str(url)) is False:
+                print(url)
+                if os.path.exists(os.path.join('../' + settings.MEDIA_URL + 'images/', str(instance[0].icon))) is False:
                     url = '/media/images/unknown.jpeg'
+                print(url)
                 return render(request, 'page/profile.html', {'form': form,
                                                              'url': url})
             else:

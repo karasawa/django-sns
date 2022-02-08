@@ -1,0 +1,16 @@
+#login-container {
+    width: 25%;
+}
+
+/*タブレット用*/
+@media (min-width:768px) and (max-width:991px) {
+  #login-container {
+    width: 35%;
+  }
+}
+/*スマホ用*/
+@media (max-width:767px) {
+  #login-container {
+    width: 75%;
+  }
+}

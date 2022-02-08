@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block main %}
-<div class="d-flex justify-content-center border p-3 rounded-2 w-25 mx-auto" style="margin-top: 150px;">
+<div id="login-container" class="d-flex justify-content-center border p-3 rounded-2 mx-auto" style="margin-top: 150px;">
 <form method="post">
 {% csrf_token %}
   {% for item in form %}
