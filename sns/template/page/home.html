@@ -2,84 +2,88 @@
 
 
 {% block main %}
-<div class="d-flex justify-content-evenly" style="margin-top: 80px;position: relative;">
-    <div class="w-25" style="background-color: #FFF9E6;height: 500px;border-radius: 10px;">
-        <h3 class="bg-success m-2 p-2 text-white" style="text-align: center;border-radius: 10px;">グループ一覧</h3>
-        <div class="d-flex flex-column bd-highlight　bg-success">
-            <div class="d-flex flex-row-reverse p-2 m-2">
-                <a class="btn btn-success text-decoration-none text-white" style="width: 60px;" href="{% url 'group_create' %}">作成</a>
-            </div>
-            <div class="d-flex flex-column" style="align-items: center;">
-                {% for group in groups %}
-                    <a href="{% url 'group_chat' pk=group.id %}" class="text-decoration-none text-black p-2">
-                        <div class="rounded-3 bg-success p-2 text-white bg-opacity-75" style="text-align: center;max-width: 300px; min-width: 170px;">{{ group }}</div>
-                    </a>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-    <div class="w-25" style="background-color: #FFF9E6;height: 500px;border-radius: 10px;">
-        <h3 class="bg-success m-2 p-2 text-white" style="text-align: center;border-radius: 10px;">フレンド一覧</h3>
-        <div class="d-flex flex-column bd-highlight　bg-success">
-            <div class="d-flex flex-row-reverse p-2 m-2">
-                <a class="btn btn-success text-decoration-none text-white" style="width: 60px;" href="{% url 'friend_search' %}">申請</a>
-            </div>
-            <div class="d-flex flex-column justify-content-center" style="align-items: center;min-height: 120px;max-height: 120px;">
-                {% for friend in friends %}
-                    {% if friend.send_to == request.user %}
-                    <div class="d-flex flex-row align-items-center">
-                        <a href="{% url 'friend_chat' pk=friend.id %}" class="text-decoration-none text-black p-2">
-                            <div class="rounded-3 bg-success p-2 text-white bg-opacity-75"style="text-align: center;max-width: 300px; min-width: 170px;">{{ friend.send_from }}</div>
+<div class="d-flex align-items-center justify-content-around" style="height: 90%;">
+    <div class="d-flex justify-content-evenly" style="position: relative; width: 100%;">
+        <div class="w-25"  style="background-color: #FFF9E6;height: 70vh;border-radius: 10px;">
+            <h3 class="bg-success m-2 p-2 text-white" style="text-align: center;border-radius: 10px;">グループ一覧</h3>
+            <div class="d-flex flex-column bd-highlight　bg-success">
+                <div class="d-flex flex-row-reverse p-2 m-2">
+                    <a class="btn btn-success text-decoration-none text-white" style="width: 60px;" href="{% url 'group_create' %}">作成</a>
+                </div>
+                <div class="d-flex flex-column" style="align-items: center;">
+                    {% for group in groups %}
+                        <a href="{% url 'group_chat' pk=group.id %}" class="text-decoration-none text-black p-2">
+                            <div class="rounded-3 bg-success p-2 text-white bg-opacity-75" style="text-align: center;max-width: 300px; min-width: 170px;">{{ group }}</div>
                         </a>
-                        <a class="btn btn-danger text-decoration-none text-white" href="{% url 'friend_delete' pk=friend.id %}">削除</a>
-                    </div>
-                    {% else %}
-                    <div class="d-flex flex-row align-items-center">
-                        <a href="{% url 'friend_chat' pk=friend.id %}" class="text-decoration-none text-black p-2">
-                            <div class="rounded-3 bg-success p-2 text-white bg-opacity-75"style="text-align: center;max-width: 300px; min-width: 170px;">{{ friend.send_to }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="w-25" style="background-color: #FFF9E6;height: 70vh;border-radius: 10px;">
+            <h3 class="bg-success m-2 p-2 text-white" style="text-align: center;border-radius: 10px;">フレンド一覧</h3>
+            <div class="d-flex flex-column bd-highlight　bg-success">
+                <div class="d-flex flex-row-reverse p-2 m-2">
+                    <a class="btn btn-success text-decoration-none text-white" style="width: 60px;" href="{% url 'friend_search' %}">申請</a>
+                </div>
+                <div class="d-flex flex-column justify-content-center" style="align-items: center;min-height: 120px;max-height: 120px;">
+                    {% for friend in friends %}
+                        {% if friend.send_to == request.user %}
+                        <div class="d-flex flex-row align-items-center" style="flex-wrap: wrap;">
+                            <a href="{% url 'friend_chat' pk=friend.id %}" class="text-decoration-none text-black p-2">
+                                <div class="rounded-3 bg-success p-2 text-white bg-opacity-75"style="text-align: center;max-width: 300px; min-width: 170px;">{{ friend.send_from }}</div>
+                            </a>
+                            <a class="btn btn-danger text-decoration-none text-white" href="{% url 'friend_delete' pk=friend.id %}">削除</a>
+                        </div>
+                        {% else %}
+                        <div class="d-flex flex-row align-items-center" style="flex-wrap: wrap;">
+                            <a href="{% url 'friend_chat' pk=friend.id %}" class="text-decoration-none text-black p-2">
+                                <div class="rounded-3 bg-success p-2 text-white bg-opacity-75"style="text-align: center;max-width: 300px; min-width: 170px;">{{ friend.send_to }}</div>
+                            </a>
+                            <a class="btn btn-danger text-decoration-none text-white" href="{% url 'friend_delete' pk=friend.id %}">削除</a>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <div>
+                <h3 class="bg-danger m-2 p-2 text-white" style="text-align: center;border-radius: 10px;">知り合いかも？</h3>
+            </div>
+            <div class="d-flex flex-column bd-highlight　bg-success">
+                <div class="d-flex flex-column p-2 justify-content-center" style="align-items: center;min-height: 180px;max-height: 180px;">
+                    {% for deny_friend in deny_friends %}
+                        {% if deny_friend.send_to == request.user %}
+                            <div class="d-flex flex-row align-items-center" style="flex-wrap: wrap;">
+                                <a href="#" class="text-decoration-none text-black p-2">
+                                    <div class="rounded-3 bg-success p-2 text-white bg-opacity-75"style="text-align: center;max-width: 50%; min-width: 50%;">{{ deny_friend.send_from }}</div>
+                                </a>
+                                <a class="btn btn-success text-decoration-none text-white" href="{% url 'friend_promise' pk=deny_friend.id %}">承認</a>
+                                <a class="btn btn-danger text-decoration-none text-white" style="margin-left: 5px;" href="{% url 'friend_deny' pk=deny_friend.id %}">拒否</a>
+                            </div>
+                        {% else %}
+                            <div class="d-flex flex-row align-items-center" style="flex-wrap: wrap;">
+                                <a href="#" class="text-decoration-none text-black p-2">
+                                    <div class="rounded-3 bg-secondary p-2 text-white bg-opacity-75"style="text-align: center;max-width: 300px; min-width: 170px;">{{ deny_friend.send_to }}</div>
+                                </a>
+                                <a class="btn btn-secondary text-decoration-none text-white disabled" href="#">承認待</a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="w-25" style="background-color: #FFF9E6;height: 70vh;border-radius: 10px;">
+            <h3 class="bg-success m-2 p-2 text-white" style="text-align: center;border-radius: 10px;">最新のチャット</h3>
+            <div class="d-flex flex-column bd-highlight　bg-success">
+                <div class="d-flex flex-row-reverse p-2 m-2">
+                    <a class="btn btn-success text-decoration-none text-white" style="width: 75px;" href="{% url 'chat' %}">チャット</a>
+                </div>
+                <div class="d-flex flex-column justify-content-center" style="align-items: center;">
+                    {% for new_chat in new_chats %}
+                        <a href="#" class="text-decoration-none text-black p-2">
+                            <div class="rounded-3 bg-success p-2 text-white bg-opacity-75"style="text-align: center;max-width: 300px; min-width: 170px;">{{ new_chat }}</div>
                         </a>
-                        <a class="btn btn-danger text-decoration-none text-white" href="{% url 'friend_delete' pk=friend.id %}">削除</a>
-                    </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        </div>
-        <h3 class="bg-danger m-2 p-2 text-white" style="text-align: center;border-radius: 10px;">知り合いかも？</h3>
-        <div class="d-flex flex-column bd-highlight　bg-success">
-            <div class="d-flex flex-column p-2 justify-content-center" style="align-items: center;min-height: 180px;max-height: 180px;">
-                {% for deny_friend in deny_friends %}
-                    {% if deny_friend.send_to == request.user %}
-                        <div class="d-flex flex-row align-items-center">
-                            <a href="#" class="text-decoration-none text-black p-2">
-                                <div class="rounded-3 bg-success p-2 text-white bg-opacity-75"style="text-align: center;max-width: 300px; min-width: 170px;">{{ deny_friend.send_from }}</div>
-                            </a>
-                            <a class="btn btn-success text-decoration-none text-white" href="{% url 'friend_promise' pk=deny_friend.id %}">承認</a>
-                            <a class="btn btn-danger text-decoration-none text-white" style="margin-left: 5px;" href="{% url 'friend_deny' pk=deny_friend.id %}">拒否</a>
-                        </div>
-                    {% else %}
-                        <div class="d-flex flex-row align-items-center">
-                            <a href="#" class="text-decoration-none text-black p-2">
-                                <div class="rounded-3 bg-secondary p-2 text-white bg-opacity-75"style="text-align: center;max-width: 300px; min-width: 170px;">{{ deny_friend.send_to }}</div>
-                            </a>
-                            <a class="btn btn-secondary text-decoration-none text-white disabled" href="#">承認待</a>
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-    <div class="w-25" style="background-color: #FFF9E6;height: 500px;border-radius: 10px;">
-        <h3 class="bg-success m-2 p-2 text-white" style="text-align: center;border-radius: 10px;">最新のチャット</h3>
-        <div class="d-flex flex-column bd-highlight　bg-success">
-            <div class="d-flex flex-row-reverse p-2 m-2">
-                <a class="btn btn-success text-decoration-none text-white" style="width: 75px;" href="{% url 'chat' %}">チャット</a>
-            </div>
-            <div class="d-flex flex-column justify-content-center" style="align-items: center;">
-                {% for new_chat in new_chats %}
-                    <a href="#" class="text-decoration-none text-black p-2">
-                        <div class="rounded-3 bg-success p-2 text-white bg-opacity-75"style="text-align: center;max-width: 300px; min-width: 170px;">{{ new_chat }}</div>
-                    </a>
-                {% endfor %}
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
