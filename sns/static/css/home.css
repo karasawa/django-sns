@@ -1,0 +1,90 @@
+#body-container {
+    width: 100%;
+    height: 100vh;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+}
+#home-container {
+    height: 90%;
+}
+#home-group-container {
+    height: 70vh;
+    width: 25%;
+}
+#home-friend-container {
+    height: 70vh;
+    width: 25%;
+}
+#home-chat-container {
+    height: 70vh;
+    width: 25%;
+}
+
+/*タブレット用*/
+@media (min-width:768px) and (max-width:991px) {
+  #home-second-container {
+    height: 70%;
+    flex-direction: column;
+  }
+  #home-group-container {
+    height:25%;
+    width:100%;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+  }
+  #home-friend-container {
+    height:25%;
+    width:100%;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+  }
+  #home-chat-container {
+    height:25%;
+    width:100%;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+  }
+}
+/*スマホ用*/
+@media (max-width:767px) {
+  #home-container {
+      max-height: 95%;
+  }
+  #home-second-container {
+    flex-direction: column;
+  }
+  #home-group-container {
+    height:25vh;
+    width:100%;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    margin-bottom: 2%;
+  }
+  #home-friend-container {
+    height:25vh;
+    width:100%;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    margin-bottom: 2%;
+  }
+  #home-chat-container {
+    height:25vh;
+    width:100%;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    margin-bottom: 2%;
+  }
+}
+
+#body-container::-webkit-scrollbar {
+    display: none;
+}
+#home-group-container::-webkit-scrollbar {
+    display: none;
+}
+#home-friend-container::-webkit-scrollbar {
+    display: none;
+}
+#home-chat-container::-webkit-scrollbar {
+    display: none;
+}
