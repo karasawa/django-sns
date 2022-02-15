@@ -4,14 +4,14 @@
 {% block main %}
 <div class="d-flex justify-content-center">
 <div class="d-flex w-25 flex-column justify-content-center" style="margin-top: 90px;">
-    <div class="d-flex justify-content-center">
-        <img src="{{ url }}" style="border-radius: 100%;width: 130px;height: 110px;"/>
+    <div class="d-flex justify-content-center" style="margin-bottom: 10px;">
+        <img src="{{ url }}" style="border-radius: 100%;width: 110px;height: 110px;"/>
     </div>
 <form method="post">
 {% csrf_token %}
   {% for item in form %}
       <div class="row mb-3 form-group">
-          <label for="{{item.id_for_label}}" class="col-sm-2 col-form-label w-50">{{item.label}}</label>
+          <label for="{{item.id_for_label}}" class="text-white col-sm-2 col-form-label w-50">{{item.label}}</label>
               <input
                   type="{{item.field.widget.input_type}}"
                   style="background-color: #FFF9E6;"

@@ -3,6 +3,8 @@ from django.contrib.auth import authenticate, login as dj_login
 from account.forms import LoginForm, SignupForm
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from app.models import Profile
+
 def login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -12,14 +14,17 @@ def login(request):
             user = authenticate(email=email, password=password)
             if user is not None:
                 dj_login(request, user)
-                messages.success(request, 'ようこそ' + str(request.user) + 'さん！')
+                profile = Profile.objects.filter(user=request.user)[0]
+                if profile:
+                    messages.success(request, 'ようこそ' + str(profile.nick_name) + 'さん！')
+                else:
+                    messages.success(request, 'ようこそ' + str(request.user) + 'さん！')
                 return redirect('home')
         messages.error(request, 'ログインに失敗しました')
         return render(request, 'page/login.html', {'form': form})
     else:
         form = LoginForm()
         return render(request, 'page/login.html', {'form': form})
-
 
 def signup(request):
     User = get_user_model()

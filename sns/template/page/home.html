@@ -79,9 +79,17 @@
                 </div>
                 <div class="d-flex flex-column justify-content-center" style="align-items: center;">
                     {% for new_chat in new_chats %}
-                        <a href="#" class="text-decoration-none text-black p-2">
-                            <div class="rounded-3 bg-success p-2 text-white bg-opacity-75"style="text-align: center;max-width: 300px; min-width: 170px;">{{ new_chat }}</div>
+                    <div class="d-flex flex-row">
+                        <a href="/app/friend_chat/{{ new_chat.friend }}/" class="text-decoration-none text-black p-2">
+                            <div class="rounded-3 bg-success p-2 text-white bg-opacity-75 position-relative" style="text-align: center;max-width: 300px; min-width: 170px;">
+                                {{ new_chat.content }}
+                                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ new_chat.profile.nick_name }}
+                                    <span class="visually-hidden">unread messages</span>
+                                  </span>
+                            </div>
                         </a>
+                    </div>
                     {% endfor %}
                 </div>
             </div>

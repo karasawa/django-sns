@@ -107,9 +107,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ja'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tokyo'
 
 USE_I18N = True
 
@@ -132,7 +132,7 @@ AUTH_USER_MODEL = 'account.User'
 
 LOGIN_URL = '/login/'
 
-LOGIN_REDIRECT_URL = '/home/'
+LOGIN_REDIRECT_URL = '//'
 
 LOGOUT_URL = '/logout/'
 

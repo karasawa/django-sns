@@ -17,7 +17,21 @@ def home(request):
     friends = friends.filter(Q(send_from=request.user) | Q(send_to=request.user))
     deny_friends = Friend.objects.filter(deny_flag=False, promise_flag=False)
     deny_friends = deny_friends.filter(Q(send_from=request.user) | Q(send_to=request.user))
-    new_chats = Message.objects.filter(friend=request.user).order_by('-created_at')[:5]
+    friend_id_list = []
+    new_chats_list = []
+    new_chats_to_friends = Friend.objects.filter(promise_flag=True, send_from=request.user)
+    for new_chats_to_friend in new_chats_to_friends:
+        friend_id_list.append(new_chats_to_friend.id)
+    new_chats_from_friends = Friend.objects.filter(promise_flag=True, send_to=request.user)
+    for new_chats_from_friend in new_chats_from_friends:
+        friend_id_list.append(new_chats_from_friend.id)
+    new_chats = Message.objects.filter(friend__in=friend_id_list).order_by('-created_at')
+    for new_chat in new_chats:
+        if new_chat.owner != request.user:
+            new_chats_list.append(new_chat)
+        else:
+            pass
+    new_chats = new_chats_list[:5]
     return render(request, 'page/home.html', {'groups': groups,
                                               'friends': friends,
                                               'deny_friends': deny_friends,
@@ -26,14 +40,14 @@ def home(request):
 @login_required
 def group(request):
     print('aaa')
-    return redirect('home')
+    return redirect('')
 
 @login_required
 def friend_delete(request, pk):
     target = Friend.objects.get(id=pk)
     if target:
         target.delete()
-        return redirect('home')
+        return redirect('')
     else:
         messages.error(request, '削除に失敗しました')
 
@@ -43,7 +57,7 @@ def friend_promise(request, pk):
     if target:
         target.promise_flag = True
         target.save()
-        return redirect('home')
+        return redirect('')
     else:
         messages.error(request, '承認に失敗しました')
 
@@ -52,7 +66,7 @@ def friend_deny(request, pk):
     target = Friend.objects.get(id=pk)
     if target:
         target.delete()
-        return redirect('home')
+        return redirect('')
     else:
         messages.error(request, '申請拒否に失敗しました')
 
@@ -112,7 +126,7 @@ def friend_request(request, pk):
                               deny_flag=False,
                               promise_flag=False)
         messages.success(request, user + 'へフレンド申請が送信されました')
-        return redirect('home')
+        return redirect('')
 
 
 @login_required
@@ -204,14 +218,17 @@ def friend_chat(request, pk):
             if form.is_valid():
                 Message.objects.create(owner=request.user,
                                        content=content,
-                                       friend=friend.id
+                                       friend=friend.id,
+                                       profile=profile[0]
                                        )
             mes = Message.objects.filter(friend=friend.id)
             return render(request, 'page/chat.html', {'form': ChatForm(request.POST),
                                                       'mes': mes,
                                                       'all_group': all_group,
                                                       'in_speaking_friend': in_speaking_friend,
-                                                      'all_friend': all_friend})
+                                                      'all_friend': all_friend,
+                                                      'profile': profile[0],
+                                                      'friend_profile': friend_profile[0]})
         else:
             messages.error(request, 'プロフィール情報を登録してから、チャットに参加しましょう')
             return redirect('friend_chat')
@@ -243,6 +260,7 @@ def group_chat(request, pk):
                 Message.objects.create(owner=request.user,
                                        content=content,
                                        group=group,
+                                       profile=profile[0]
                                        )
             mes = Message.objects.filter(group=group)
             return render(request, 'page/chat.html', {'form': ChatForm(request.POST),
@@ -365,8 +383,10 @@ def profile(request):
                                         'icon': data.icon,
                                         'one_mes': data.one_mes})
             url = settings.MEDIA_URL + 'images/' + str(data.icon)
-            if os.path.exists(str(url)) is False:
+            print(url)
+            if os.path.exists(os.path.join('../' + settings.MEDIA_URL + 'images/', str(data.icon))) is False:
                 url = '/media/images/unknown.jpeg'
+                print('aa')
             return render(request, 'page/profile.html', {'form': form,
                                                          'url': url})
         else:

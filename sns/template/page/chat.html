@@ -48,8 +48,18 @@
     {% for item in mes %}
         {% if item.owner == request.user %}
             <div class="d-flex flex-row align-items-center" style="position: relative;left: 660px;">
-                <div class="rounded-3 bg-success p-2 text-white bg-opacity-75 m-4" style="max-width: 350px; min-width: 350px;">
-                    {{ item.content }}<i class="fa-solid fa-trash-can" style="width: 10px;color: red;"></i>
+                <div class="d-flex flex-column m-3">
+                    <div class="d-flex flex-row justify-content-between">
+                        <div>
+                            {{ item.created_at|date:"Y-m-j H:i:s" }}
+                        </div>
+                        <div>
+                            {{ item.profile.nick_name }}
+                        </div>
+                    </div>
+                    <div class="rounded-3 bg-success p-2 text-white bg-opacity-75 m-2" style="max-width: 350px; min-width: 350px;">
+                        {{ item.content }}
+                    </div>
                 </div>
                 <div>
                     <img src="/media/images/{{ profile.icon }}" style="width: 30px;height: 25px;border-radius: 100%;"/>
@@ -60,8 +70,18 @@
                 <div>
                     <img src="/media/images/{{ friend_profile.icon }}" style="width: 30px;height: 25px;border-radius: 100%;"/>
                 </div>
-                <div class="rounded-3 bg-danger p-2 text-white bg-opacity-75 m-4" style="position: relative;left: 0px;max-width: 350px; min-width: 350px;">
-                    {{ item.content }}
+                <div class="d-flex flex-column m-3">
+                    <div class="d-flex flex-row justify-content-between">
+                        <div>
+                            {{ item.profile.nick_name }}
+                        </div>
+                        <div>
+                            {{ item.created_at|date:"Y-m-j H:i:s" }}
+                        </div>
+                    </div>
+                    <div class="rounded-3 bg-danger p-2 text-white bg-opacity-75 m-2" style="position: relative;left: 0px;max-width: 350px; min-width: 350px;">
+                        {{ item.content }}
+                    </div>
                 </div>
             </div>
         {% endif %}
@@ -121,9 +141,43 @@
     <div class="mb-auto p-2 bd-highlight" style="height: 1000px;display: block;">
     {% for item in mes %}
         {% if item.owner == request.user %}
-            <div class="rounded-3 bg-success p-2 text-white bg-opacity-75 m-4"style="position: relative;left: 660px; max-width: 350px; min-width: 350px;">{{ item.content }}</div>
+            <div class="d-flex flex-row align-items-center" style="position: relative;left: 660px;">
+                <div class="d-flex flex-column m-3">
+                    <div class="d-flex flex-row justify-content-between">
+                        <div>
+                            {{ item.created_at|date:"Y-m-j H:i:s" }}
+                        </div>
+                        <div>
+                            {{ item.profile.nick_name }}
+                        </div>
+                    </div>
+                    <div class="rounded-3 bg-success p-2 text-white bg-opacity-75 m-2" style="max-width: 350px; min-width: 350px;">
+                        {{ item.content }}
+                    </div>
+                </div>
+                <div>
+                    <img src="/media/images/{{ item.profile.icon }}" style="width: 30px;height: 25px;border-radius: 100%;"/>
+                </div>
+            </div>
         {% else %}
-            <div class="rounded-3 bg-danger p-2 text-white bg-opacity-75 m-4" style="position: relative;left: 50px;max-width: 350px; min-width: 350px;">{{ item.content }}</div>
+            <div class="d-flex flex-row align-items-center" style="position: relative;left: 20px;">
+                <div>
+                    <img src="/media/images/{{ item.profile.icon }}" style="width: 30px;height: 25px;border-radius: 100%;"/>
+                </div>
+                <div class="d-flex flex-column m-3">
+                    <div class="d-flex flex-row justify-content-between">
+                        <div>
+                            {{ item.profile.nick_name }}
+                        </div>
+                        <div>
+                            {{ item.created_at|date:"Y-m-j H:i:s" }}
+                        </div>
+                    </div>
+                    <div class="rounded-3 bg-danger p-2 text-white bg-opacity-75 m-2" style="position: relative;left: 0px;max-width: 350px; min-width: 350px;">
+                        {{ item.content }}
+                    </div>
+                </div>
+            </div>
         {% endif %}
     {% endfor %}
   </div>
