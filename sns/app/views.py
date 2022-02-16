@@ -12,6 +12,12 @@ import os
 @login_required
 def home(request):
     user = get_user_model().objects.get(email=request.user)
+    display_username = Profile.objects.filter(user=request.user)[0].nick_name
+    if display_username:
+        pass
+    else:
+        display_username = request.user
+    print(display_username)
     groups = user.group_member.all()
     friends = Friend.objects.filter(promise_flag=True)
     friends = friends.filter(Q(send_from=request.user) | Q(send_to=request.user))
@@ -35,7 +41,8 @@ def home(request):
     return render(request, 'page/home.html', {'groups': groups,
                                               'friends': friends,
                                               'deny_friends': deny_friends,
-                                              'new_chats': new_chats})
+                                              'new_chats': new_chats,
+                                              'display_username': display_username})
 
 @login_required
 def group(request):

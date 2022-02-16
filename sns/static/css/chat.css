@@ -5,3 +5,20 @@
 #scroll-box::-webkit-scrollbar {
     display: none;
 }
+#message_content {
+position: relative;
+display: inline-block; /* 吹き出しが文字幅に合わせます */
+margin: 15px 20px 20px;
+padding: 10px 20px;
+background: #696969; //（◯）カラー変更はこちら
+text-align: left; //テキスト左揃え
+border-radius: 15px; //枠の丸みの設定はこちら
+}
+#message_content::after {
+content: "";
+border: 15px solid transparent;
+border-top-color: #696969; //（◯）とカラーを合わせる
+position: absolute;
+top: 15px; //三角部分の高さ
+left: -15px; //三角部分の位置
+}
