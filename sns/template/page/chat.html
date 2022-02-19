@@ -57,19 +57,21 @@
 <!--                            {{ item.profile.nick_name }}-->
                         </div>
                     </div>
-                    <div class="rounded-3 bg-success p-2 text-white bg-opacity-75 m-2" style="position: relative;max-width: 350px; min-width: 350px;">
-                        {{ item.content }}
-                        <span class="position-absolute start-100 translate-middle badge rounded-pill bg-black" style="opacity: 88%;top: -12%;">
-                          {{ item.profile.nick_name }}
-                          {% if item.profile.icon is None or item.profile.icon == '' %}
-                              <img src="/media/images/unknown.jpeg" style="width: 30px;height: 25px;border-radius: 100%;"/>
-                              <span class="visually-hidden">unread messages</span>
-                          {% else %}
-                              <img src="/media/images/{{ item.profile.icon }}" style="width: 30px;height: 25px;border-radius: 100%;"/>
-                              <span class="visually-hidden">unread messages</span>
-                          {% endif %}
-                        </span>
-                    </div>
+                    <a onclick="return message_delete();" id="message_{{ item.id }}" href="{% url 'friend_chat_delete' pk=item.id %}" class="text-decoration-none">
+                        <div class="rounded-3 bg-success p-2 text-white bg-opacity-75 m-2" style="position: relative;max-width: 350px; min-width: 350px;">
+                            {{ item.content }}
+                            <span class="position-absolute start-100 translate-middle badge rounded-pill bg-black" style="opacity: 88%;top: -12%;">
+                              {{ item.profile.nick_name }}
+                              {% if item.profile.icon is None or item.profile.icon == '' %}
+                                  <img src="/media/images/unknown.jpeg" style="width: 30px;height: 25px;border-radius: 100%;"/>
+                                  <span class="visually-hidden">unread messages</span>
+                              {% else %}
+                                  <img src="/media/images/{{ item.profile.icon }}" style="width: 30px;height: 25px;border-radius: 100%;"/>
+                                  <span class="visually-hidden">unread messages</span>
+                              {% endif %}
+                            </span>
+                        </div>
+                    </a>
                 </div>
                 <div>
 <!--                    <img src="/media/images/{{ profile.icon }}" style="width: 30px;height: 25px;border-radius: 100%;"/>-->
@@ -124,7 +126,7 @@
       </div>
   {% endfor %}
     <button type="submit" class="btn btn-success">送信</button>
-    <a class="btn btn-danger text-decoration-none text-white" href="{% url 'friend_chat_delete' %}">取消</a>
+    <a class="btn btn-danger text-decoration-none text-white" href="#">取消</a>
 </div>
 </form>
 {% elif 'group_chat' in request.path %}
@@ -228,7 +230,7 @@
       </div>
   {% endfor %}
     <button type="submit" class="btn btn-success">送信</button>
-    <a class="btn btn-danger text-decoration-none text-white" href="{% url 'group_chat_delete' %}">取消</a>
+    <a class="btn btn-danger text-decoration-none text-white" href="#">取消</a>
     <a class="btn btn-success text-decoration-none text-white float-end" href="{% url 'group_invite' %}">招待</a>
 </div>
 </form>

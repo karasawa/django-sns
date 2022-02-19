@@ -16,6 +16,7 @@ def home(request):
     deny_friends = Friend.objects.filter(deny_flag=False, promise_flag=False)
     deny_friends = deny_friends.filter(Q(send_from=request.user) | Q(send_to=request.user))
     friend_id_list = []
+    friend_id_list_send_from = []
     new_chats_list = []
     new_chats_to_friends = Friend.objects.filter(promise_flag=True, send_from=request.user)
     for new_chats_to_friend in new_chats_to_friends:
@@ -26,7 +27,11 @@ def home(request):
     new_chats = Message.objects.filter(friend__in=friend_id_list).order_by('-created_at')
     for new_chat in new_chats:
         if new_chat.owner != request.user:
-            new_chats_list.append(new_chat)
+            if new_chat.owner in friend_id_list_send_from:
+                pass
+            else:
+                new_chats_list.append(new_chat)
+                friend_id_list_send_from.append(new_chat.owner)
         else:
             pass
     new_chats = new_chats_list[:5]
@@ -332,20 +337,27 @@ def chat(request):
 
 
 @login_required
-def friend_chat_delete(request):
-    pk = request.session.get('friend_pk')
-    friend = Friend.objects.get(id=pk)
-    instance = Message.objects.filter(owner=request.user, friend=friend.id).order_by('-created_at')
-    if len(instance) == 0:
-        messages.error(request, 'あなたのメッセージがありません')
-        return redirect('/app/friend_chat/' + pk + '/')
-    else:
-        if instance[0].owner == request.user:
-            instance[0].delete()
-            return redirect('/app/friend_chat/' + pk + '/')
-        else:
-            messages.error(request, '削除期限が過ぎています')
-            return redirect('/app/friend_chat/' + pk + '/')
+def friend_chat_delete(request, pk):
+    friend_pk = request.session.get('friend_pk')
+    message = Message.objects.get(id=pk)
+    message.delete()
+    return redirect('/app/friend_chat/' + friend_pk + '/')
+
+# @login_required
+# def friend_chat_delete(request):
+#     pk = request.session.get('friend_pk')
+#     friend = Friend.objects.get(id=pk)
+#     instance = Message.objects.filter(owner=request.user, friend=friend.id).order_by('-created_at')
+#     if len(instance) == 0:
+#         messages.error(request, 'あなたのメッセージがありません')
+#         return redirect('/app/friend_chat/' + pk + '/')
+#     else:
+#         if instance[0].owner == request.user:
+#             instance[0].delete()
+#             return redirect('/app/friend_chat/' + pk + '/')
+#         else:
+#             messages.error(request, '削除期限が過ぎています')
+#             return redirect('/app/friend_chat/' + pk + '/')
 
 
 @login_required
