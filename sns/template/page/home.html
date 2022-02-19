@@ -10,11 +10,14 @@
                 <div class="d-flex flex-row-reverse p-2 m-2">
                     <a class="btn btn-success text-decoration-none text-white" style="width: 60px;" href="{% url 'group_create' %}">作成</a>
                 </div>
-                <div class="d-flex flex-column" style="align-items: center;">
+                <div class="d-flex flex-column justify-content-center" style="align-items: center;">
                     {% for group in groups %}
-                        <a href="{% url 'group_chat' pk=group.id %}" class="text-decoration-none text-black p-2">
-                            <div class="rounded-3 bg-success p-2 text-white bg-opacity-75" style="text-align: center;max-width: 300px; min-width: 170px;">{{ group }}</div>
-                        </a>
+                        <div class="d-flex flex-row align-items-center" style="flex-wrap: wrap;">
+                            <a href="{% url 'group_chat' pk=group.id %}" class="text-decoration-none text-black p-2">
+                                <div class="rounded-3 bg-success p-2 text-white bg-opacity-75"style="text-align: center;max-width: 300px; min-width: 170px;">{{ group }}</div>
+                            </a>
+                            <a class="btn btn-danger text-decoration-none text-white" href="{% url 'group_delete' pk=group.id %}">削除</a>
+                        </div>
                     {% endfor %}
                 </div>
             </div>

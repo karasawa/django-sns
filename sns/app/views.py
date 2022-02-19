@@ -5,8 +5,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib.auth import get_user_model
-from django.conf import settings
-import os
 
 
 @login_required
@@ -135,6 +133,15 @@ def friend_request(request, pk):
         messages.success(request, user + 'へフレンド申請が送信されました')
         return redirect('home')
 
+@login_required
+def group_delete(request, pk):
+    target = Group.objects.get(id=pk)
+    if target:
+        target.delete()
+        return redirect('home')
+    else:
+        messages.error(request, '削除に失敗しました')
+
 
 @login_required
 def group_create(request):
@@ -187,7 +194,16 @@ def group_invite(request):
                                                                'search': search,
                                                                'promised_friend_list': promised_friend_list})
     else:
-        return render(request, 'page/friend_search.html', {})
+        users = get_user_model().objects.all()
+        for user in users:
+            if Friend.objects.filter(promise_flag=True, send_from=request.user, send_to=user.id):
+                promised_friend_list.append(user)
+            elif Friend.objects.filter(promise_flag=True, send_from=user.id, send_to=request.user):
+                promised_friend_list.append(user)
+            else:
+                pass
+        return render(request, 'page/friend_search.html', {'users': users,
+                                                           'promised_friend_list': promised_friend_list})
 
 
 @login_required
@@ -198,9 +214,9 @@ def group_invite_request(request, pk):
     user_id = instance.id
     group = Group.objects.get(id=group_id)
     query1 = group.member.all()
-    if user_id in query1:
+    if instance in query1:
         messages.error(request, user + 'は既にグループに参加しています')
-        redirect('group_invite')
+        return redirect('group_invite')
     else:
         group.member.add(user_id)
         messages.success(request, user + 'を' + group.title + 'に招待しました')

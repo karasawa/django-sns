@@ -22,6 +22,7 @@ urlpatterns = [
     path('friend_request/<str:pk>/', views.friend_request, name='friend_request'),
 
     path('group_create/', views.group_create, name='group_create'),
+    path('group_delete/<str:pk>/', views.group_delete, name='group_delete'),
     path('group_invite/', views.group_invite, name='group_invite'),
     path('group_invite_request/<str:pk>/', views.group_invite_request, name='group_invite_request'),
     path('group/', views.group, name='group'),
