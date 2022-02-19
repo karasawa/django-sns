@@ -14,9 +14,9 @@ def login(request):
             user = authenticate(email=email, password=password)
             if user is not None:
                 dj_login(request, user)
-                profile = Profile.objects.filter(user=request.user)[0]
+                profile = Profile.objects.filter(user=request.user)
                 if profile:
-                    messages.success(request, 'ようこそ' + str(profile.nick_name) + 'さん！')
+                    messages.success(request, 'ようこそ' + str(profile[0].nick_name) + 'さん！')
                 else:
                     messages.success(request, 'ようこそ' + str(request.user) + 'さん！')
                 return redirect('home')

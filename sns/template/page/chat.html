@@ -23,27 +23,27 @@
         {% if target.send_to == request.user %}
             {% if target == in_speaking_friend %}
                 <a href="{% url 'friend_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
-                    <div class="rounded-3 bg-success p-2 text-danger" style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.send_from }}</div>
+                    <div class="rounded-3 bg-success p-2 text-danger" style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.profile_send_from.nick_name }}</div>
                 </a>
             {% else %}
                 <a href="{% url 'friend_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
-                    <div class="rounded-3 bg-success p-2 text-white bg-opacity-50" style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.send_from }}</div>
+                    <div class="rounded-3 bg-success p-2 text-white bg-opacity-50" style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.profile_send_from.nick_name }}</div>
                 </a>
             {% endif %}
         {% elif target.send_from == request.user %}
             {% if target == in_speaking_friend %}
                 <a href="{% url 'friend_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
-                    <div class="rounded-3 bg-success p-2 text-danger" style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.send_to }}</div>
+                    <div class="rounded-3 bg-success p-2 text-danger" style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.profile_send_to.nick_name }}</div>
                 </a>
             {% else %}
                 <a href="{% url 'friend_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
-                    <div class="rounded-3 bg-success p-2 text-white bg-opacity-50" style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.send_to }}</div>
+                    <div class="rounded-3 bg-success p-2 text-white bg-opacity-50" style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.profile_send_to.nick_name }}</div>
                 </a>
             {% endif %}
         {% endif %}
     {% endfor %}
 </div>
-<div id="scroll-box" class="rounded w-75 mx-auto p-2 d-flex align-items-start flex-column bd-highlight mb-2 border mt-5" style="background-color: #FFF9E6;height: 450px;">
+<div id="scroll-box" class="rounded mx-auto p-2 d-flex align-items-start flex-column bd-highlight mb-2 border mt-5" style="width: 75%;background-color: #FFF9E6;height: 450px;">
     <div class="mb-auto p-2 bd-highlight" style="height: 1000px;display: block;">
     {% for item in mes %}
         {% if item.owner == request.user %}
@@ -61,8 +61,13 @@
                         {{ item.content }}
                         <span class="position-absolute start-100 translate-middle badge rounded-pill bg-black" style="opacity: 88%;top: -12%;">
                           {{ item.profile.nick_name }}
-                          <img src="/media/images/{{ profile.icon }}" style="width: 30px;height: 22px;border-radius: 100%;"/>
-                          <span class="visually-hidden">unread messages</span>
+                          {% if item.profile.icon is None or item.profile.icon == '' %}
+                              <img src="/media/images/unknown.jpeg" style="width: 30px;height: 25px;border-radius: 100%;"/>
+                              <span class="visually-hidden">unread messages</span>
+                          {% else %}
+                              <img src="/media/images/{{ item.profile.icon }}" style="width: 30px;height: 25px;border-radius: 100%;"/>
+                              <span class="visually-hidden">unread messages</span>
+                          {% endif %}
                         </span>
                     </div>
                 </div>
@@ -87,7 +92,11 @@
                     <div class="rounded-3 bg-danger p-2 text-white bg-opacity-75 m-2" style="position: relative;left: 0px;max-width: 350px; min-width: 350px;">
                         {{ item.content }}
                         <span class="position-absolute start-0 translate-middle badge rounded-pill bg-black" style="opacity: 88%;top: -12%;">
-                          <img src="/media/images/{{ profile.icon }}" style="width: 30px;height: 22px;border-radius: 100%;"/>
+                          {% if item.profile.icon is None or item.profile.icon == '' %}
+                              <img src="/media/images/unknown.jpeg" style="width: 30px;height: 25px;border-radius: 100%;"/>
+                          {% else %}
+                              <img src="/media/images/{{ item.profile.icon }}" style="width: 30px;height: 25px;border-radius: 100%;"/>
+                          {% endif %}
                           {{ item.profile.nick_name }}
                           <span class="visually-hidden">unread messages</span>
                         </span>
@@ -138,11 +147,11 @@
     {% for target in all_friend %}
         {% if target.send_to == request.user %}
             <a href="{% url 'friend_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
-                <div class="rounded-3 bg-success p-2 text-white bg-opacity-50"style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.send_from }}</div>
+                <div class="rounded-3 bg-success p-2 text-white bg-opacity-50"style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.profile_send_from.nick_name }}</div>
             </a>
         {% elif target.send_from == request.user %}
             <a href="{% url 'friend_chat' pk=target.id %}" class="text-decoration-none text-black p-2">
-                <div class="rounded-3 bg-success p-2 text-white bg-opacity-50"style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.send_to }}</div>
+                <div class="rounded-3 bg-success p-2 text-white bg-opacity-50"style="text-align: center;max-width: 300px; min-width: 170px;">{{ target.profile_send_to.nick_name }}</div>
             </a>
         {% endif %}
     {% endfor %}
@@ -165,7 +174,7 @@
                         {{ item.content }}
                         <span class="position-absolute start-100 translate-middle badge rounded-pill bg-black" style="opacity: 88%;top: -12%;">
                           {{ item.profile.nick_name }}
-                          <img src="/media/images/{{ item.profile.icon }}" style="width: 30px;height: 22px;border-radius: 100%;"/>
+                          <img src="/media/images/{{ item.profile.icon }}" style="width: 30px;height: 25px;border-radius: 100%;"/>
                           <span class="visually-hidden">unread messages</span>
                         </span>
                     </div>
@@ -191,7 +200,7 @@
                     <div class="rounded-3 bg-danger p-2 text-white bg-opacity-75 m-2" style="position: relative;left: 0px;max-width: 350px; min-width: 350px;">
                         {{ item.content }}
                         <span class="position-absolute start-0 translate-middle badge rounded-pill bg-black" style="opacity: 88%;top: -12%;">
-                          <img src="/media/images/{{ item.profile.icon }}" style="width: 30px;height: 22px;border-radius: 100%;"/>
+                          <img src="/media/images/{{ item.profile.icon }}" style="width: 30px;height: 25px;border-radius: 100%;"/>
                           {{ item.profile.nick_name }}
                           <span class="visually-hidden">unread messages</span>
                         </span>

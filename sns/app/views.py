@@ -12,12 +12,6 @@ import os
 @login_required
 def home(request):
     user = get_user_model().objects.get(email=request.user)
-    display_username = Profile.objects.filter(user=request.user)[0].nick_name
-    if display_username:
-        pass
-    else:
-        display_username = request.user
-    print(display_username)
     groups = user.group_member.all()
     friends = Friend.objects.filter(promise_flag=True)
     friends = friends.filter(Q(send_from=request.user) | Q(send_to=request.user))
@@ -41,20 +35,19 @@ def home(request):
     return render(request, 'page/home.html', {'groups': groups,
                                               'friends': friends,
                                               'deny_friends': deny_friends,
-                                              'new_chats': new_chats,
-                                              'display_username': display_username})
+                                              'new_chats': new_chats})
 
 @login_required
 def group(request):
     print('aaa')
-    return redirect('')
+    return redirect('home')
 
 @login_required
 def friend_delete(request, pk):
     target = Friend.objects.get(id=pk)
     if target:
         target.delete()
-        return redirect('')
+        return redirect('home')
     else:
         messages.error(request, '削除に失敗しました')
 
@@ -64,7 +57,7 @@ def friend_promise(request, pk):
     if target:
         target.promise_flag = True
         target.save()
-        return redirect('')
+        return redirect('home')
     else:
         messages.error(request, '承認に失敗しました')
 
@@ -73,12 +66,15 @@ def friend_deny(request, pk):
     target = Friend.objects.get(id=pk)
     if target:
         target.delete()
-        return redirect('')
+        return redirect('home')
     else:
         messages.error(request, '申請拒否に失敗しました')
 
 @login_required
 def friend_search(request):
+    if not Profile.objects.filter(user=request.user):
+        messages.error(request, 'はじめに、プロフィールの設定を行ってください')
+        return redirect('profile')
     promised_friend_list = []
     waiting_approve_list = []
     if request.method == 'POST':
@@ -109,10 +105,12 @@ def friend_search(request):
 @login_required
 def friend_request(request, pk):
     instance = get_user_model().objects.get(id=pk)
-    user = get_user_model().objects.get(id=pk).email
-    user_id = get_user_model().objects.get(id=pk).id
+    user = instance.email
+    user_id = instance.id
     query1 = Friend.objects.filter(send_from=request.user.id, send_to=user_id)
     query2 = Friend.objects.filter(send_from=user_id, send_to=request.user.id)
+    profile_send_from = Profile.objects.filter(user=request.user.id)[0]
+    profile_send_to = Profile.objects.filter(user=user_id)[0]
     if query1:
         if query1.filter(promise_flag=True):
             messages.error(request, '既に' + user + 'とはフレンドです')
@@ -131,13 +129,18 @@ def friend_request(request, pk):
         Friend.objects.create(send_from=request.user,
                               send_to=instance,
                               deny_flag=False,
-                              promise_flag=False)
+                              promise_flag=False,
+                              profile_send_from=profile_send_from,
+                              profile_send_to=profile_send_to)
         messages.success(request, user + 'へフレンド申請が送信されました')
-        return redirect('')
+        return redirect('home')
 
 
 @login_required
 def group_create(request):
+    if not Profile.objects.filter(user=request.user):
+        messages.error(request, 'はじめに、プロフィールの設定を行ってください')
+        return redirect('profile')
     if request.method == 'POST':
         form = GroupForm(request.POST)
         owner = request.POST.get('owner')
@@ -229,6 +232,8 @@ def friend_chat(request, pk):
                                        profile=profile[0]
                                        )
             mes = Message.objects.filter(friend=friend.id)
+            for i in mes:
+                print('icon is ' + str(i.profile.icon))
             return render(request, 'page/chat.html', {'form': ChatForm(request.POST),
                                                       'mes': mes,
                                                       'all_group': all_group,
@@ -360,12 +365,7 @@ def profile(request):
                                 icon=icon,
                                 one_mes=one_mes)
                 messages.success(request, 'プロフィール情報を更新しました')
-                instance = Profile.objects.filter(user=request.user)
-                url = settings.MEDIA_URL + 'images/' + str(instance[0].icon)
-                print(url)
-                if os.path.exists(os.path.join('../' + settings.MEDIA_URL + 'images/', str(instance[0].icon))) is False:
-                    url = '/media/images/unknown.jpeg'
-                print(url)
+                url = icon
                 return render(request, 'page/profile.html', {'form': form,
                                                              'url': url})
             else:
@@ -373,8 +373,7 @@ def profile(request):
                                        nick_name=nick_name,
                                        icon=icon,
                                        one_mes=one_mes)
-                instance = Profile.objects.filter(user=request.user)
-                url = settings.MEDIA_URL + 'images/' + str(instance[0].icon)
+                url = icon
                 messages.success(request, 'プロフィール情報を登録しました')
                 return render(request, 'page/profile.html', {'form': form,
                                                              'url': url})
@@ -389,11 +388,7 @@ def profile(request):
             form = ProfileForm(initial={'nick_name': data.nick_name,
                                         'icon': data.icon,
                                         'one_mes': data.one_mes})
-            url = settings.MEDIA_URL + 'images/' + str(data.icon)
-            print(url)
-            if os.path.exists(os.path.join('../' + settings.MEDIA_URL + 'images/', str(data.icon))) is False:
-                url = '/media/images/unknown.jpeg'
-                print('aa')
+            url = data.icon
             return render(request, 'page/profile.html', {'form': form,
                                                          'url': url})
         else:
