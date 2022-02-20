@@ -11,7 +11,7 @@ urlpatterns = [
     path('chat/', views.group_chat, name='chat'),
     path('group_chat/<str:pk>/', views.group_chat, name='group_chat'),
     path('friend_chat/<str:pk>/', views.friend_chat, name='friend_chat'),
-    path('group_chat_delete/', views.group_chat_delete, name='group_chat_delete'),
+    path('group_chat_delete/<str:pk>/', views.group_chat_delete, name='group_chat_delete'),
     path('friend_chat_delete/<str:pk>/', views.friend_chat_delete, name='friend_chat_delete'),
 
     path('friend_delete/<str:pk>/', views.friend_delete, name='friend_delete'),

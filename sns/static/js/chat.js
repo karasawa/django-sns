@@ -5,6 +5,8 @@ const init_scroll = () => {
 }
 
 const message_delete = () => {
+//    const mini_menu = document.getElementById('mini_menu');
+//    mini_menu.style.display = 'block';
     var result = window.confirm('メッセージを削除してもよろしいですか');
     if(result == true){
         pass;
@@ -12,3 +14,9 @@ const message_delete = () => {
         return false;
     }
 }
+
+//const cancel = () => {
+//    const mini_menu = document.getElementById('mini_menu');
+//    mini_menu.style.display = 'none';
+//    return false;
+//}

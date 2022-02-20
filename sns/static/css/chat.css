@@ -1,3 +1,24 @@
+#mini_menu{
+    display:none;
+    z-index: 100;
+    position:fixed;
+    left:70%;
+    top:50%;
+    width:110px;
+    height:80px;
+    border:1px solid white;
+    border-radius: 7px;
+}
+#mini_menu li{
+    cursor:pointer;
+}
+#mini_menu li a{
+    text-decoration: none;
+    color: white;
+}
+#mini_menu li a:hover{
+    color: blue;
+}
 #scroll-box {
     overflow-y: scroll;
     -ms-overflow-style: none;

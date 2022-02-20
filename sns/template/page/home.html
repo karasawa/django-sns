@@ -57,7 +57,7 @@
                         {% if deny_friend.send_to == request.user %}
                             <div class="d-flex flex-row align-items-center" style="flex-wrap: wrap;">
                                 <a href="#" class="text-decoration-none text-black p-2">
-                                    <div class="rounded-3 bg-success p-2 text-white bg-opacity-75"style="text-align: center;max-width: 100%; min-width: 30%;">{{ deny_friend.send_from }}</div>
+                                    <div class="rounded-3 bg-success p-2 text-white bg-opacity-75"style="text-align: center;max-width: 300px; min-width: 170px;">{{ deny_friend.profile_send_from.nick_name }}</div>
                                 </a>
                                 <a class="btn btn-success text-decoration-none text-white" href="{% url 'friend_promise' pk=deny_friend.id %}">承認</a>
                                 <a class="btn btn-danger text-decoration-none text-white" style="margin-left: 5px;" href="{% url 'friend_deny' pk=deny_friend.id %}">拒否</a>
@@ -65,7 +65,7 @@
                         {% else %}
                             <div class="d-flex flex-row align-items-center" style="flex-wrap: wrap;">
                                 <a href="#" class="text-decoration-none text-black p-2">
-                                    <div class="rounded-3 bg-secondary p-2 text-white bg-opacity-75"style="text-align: center;max-width: 100%; min-width: 30%;">{{ deny_friend.send_to }}</div>
+                                    <div class="rounded-3 bg-secondary p-2 text-white bg-opacity-75"style="text-align: center;max-width: 300px; min-width: 170px;">{{ deny_friend.profile_send_to.nick_name }}</div>
                                 </a>
                                 <a class="btn btn-secondary text-decoration-none text-white disabled" href="#">承認待</a>
                             </div>

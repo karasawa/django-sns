@@ -359,22 +359,28 @@ def friend_chat_delete(request, pk):
 #             messages.error(request, '削除期限が過ぎています')
 #             return redirect('/app/friend_chat/' + pk + '/')
 
-
 @login_required
-def group_chat_delete(request):
-    pk = request.session.get('group_pk')
-    group = Group.objects.get(id=pk)
-    instance = Message.objects.filter(owner=request.user, group=group.id).order_by('-created_at')
-    if len(instance) == 0:
-        messages.error(request, 'あなたのメッセージがありません')
-        return redirect('/app/group_chat/' + pk + '/')
-    else:
-        if instance[0].owner == request.user:
-            instance[0].delete()
-            return redirect('/app/group_chat/' + pk + '/')
-        else:
-            messages.error(request, '削除期限が過ぎています')
-            return redirect('/app/group_chat/' + pk + '/')
+def group_chat_delete(request, pk):
+    group_pk = request.session.get('group_pk')
+    message = Message.objects.get(id=pk)
+    message.delete()
+    return redirect('/app/group_chat/' + group_pk + '/')
+
+# @login_required
+# def group_chat_delete(request):
+#     pk = request.session.get('group_pk')
+#     group = Group.objects.get(id=pk)
+#     instance = Message.objects.filter(owner=request.user, group=group.id).order_by('-created_at')
+#     if len(instance) == 0:
+#         messages.error(request, 'あなたのメッセージがありません')
+#         return redirect('/app/group_chat/' + pk + '/')
+#     else:
+#         if instance[0].owner == request.user:
+#             instance[0].delete()
+#             return redirect('/app/group_chat/' + pk + '/')
+#         else:
+#             messages.error(request, '削除期限が過ぎています')
+#             return redirect('/app/group_chat/' + pk + '/')
 
 
 @login_required
@@ -422,5 +428,5 @@ def profile(request):
         else:
             form = ProfileForm()
             return render(request, 'page/profile.html', {'form': form,
-                                                         'url': '/media/images/unknown.jpeg'})
+                                                         'url': 'unknown.jpeg'})
 
