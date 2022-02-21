@@ -94,6 +94,23 @@
                         </a>
                     </div>
                     {% endfor %}
+                    {% for group_chat in group_chats_list %}
+                    <div class="d-flex flex-row">
+                        <a href="/app/group_chat/{{ group_chat.group.id }}/" class="text-decoration-none text-black p-2">
+                            <div class="rounded-3 bg-success p-2 text-white bg-opacity-75 position-relative" style="text-align: center;max-width: 300px; min-width: 170px;">
+                                {{ group_chat.content }}
+                                  <span class="position-absolute top-50 start-100 translate-middle badge rounded-pill bg-warning">
+                                    {{ group_chat.group }}
+                                    <span class="visually-hidden">unread messages</span>
+                                  </span>
+                                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ group_chat.profile.nick_name }}
+                                    <span class="visually-hidden">unread messages</span>
+                                  </span>
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>

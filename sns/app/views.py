@@ -18,6 +18,7 @@ def home(request):
     friend_id_list = []
     friend_id_list_send_from = []
     new_chats_list = []
+    group_chats_list = []
     new_chats_to_friends = Friend.objects.filter(promise_flag=True, send_from=request.user)
     for new_chats_to_friend in new_chats_to_friends:
         friend_id_list.append(new_chats_to_friend.id)
@@ -35,10 +36,19 @@ def home(request):
         else:
             pass
     new_chats = new_chats_list[:5]
+    for group in groups:
+        messages = Message.objects.filter(group=group).order_by('-created_at')
+        for message in messages:
+            if message.owner == request.user:
+                pass
+            else:
+                group_chats_list.append(message)
+                break
     return render(request, 'page/home.html', {'groups': groups,
                                               'friends': friends,
                                               'deny_friends': deny_friends,
-                                              'new_chats': new_chats})
+                                              'new_chats': new_chats,
+                                              'group_chats_list': group_chats_list})
 
 @login_required
 def group(request):
@@ -253,8 +263,6 @@ def friend_chat(request, pk):
                                        profile=profile[0]
                                        )
             mes = Message.objects.filter(friend=friend.id)
-            for i in mes:
-                print('icon is ' + str(i.profile.icon))
             return render(request, 'page/chat.html', {'form': ChatForm(request.POST),
                                                       'mes': mes,
                                                       'all_group': all_group,
@@ -284,6 +292,12 @@ def group_chat(request, pk):
     all_group = user.group_member.all()
     group = Group.objects.get(id=pk)
     in_speaking_group = group
+    group_members = group.member.all()
+    group_members_list = []
+    for group_member in group_members:
+        member_profile = Profile.objects.filter(user=group_member.id)[0]
+        group_members_list.append(member_profile)
+    group_members = group_members_list
     profile = Profile.objects.filter(user=request.user)
     if request.method == 'POST':
         if profile:
@@ -300,7 +314,8 @@ def group_chat(request, pk):
                                                       'mes': mes,
                                                       'all_group': all_group,
                                                       'all_friend': all_friend,
-                                                      'in_speaking_group': in_speaking_group})
+                                                      'in_speaking_group': in_speaking_group,
+                                                      'group_members': group_members})
         else:
             messages.error(request, 'プロフィール情報を登録してから、チャットに参加しましょう')
             return redirect('group_chat')
@@ -310,7 +325,8 @@ def group_chat(request, pk):
                                                   'mes': mes,
                                                   'all_group': all_group,
                                                   'all_friend': all_friend,
-                                                  'in_speaking_group': in_speaking_group})
+                                                  'in_speaking_group': in_speaking_group,
+                                                  'group_members': group_members})
 
 
 @login_required

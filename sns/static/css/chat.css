@@ -19,6 +19,21 @@
 #mini_menu li a:hover{
     color: blue;
 }
+#close_btn{
+    cursor: pointer;
+}
+.bar_a{
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    transform: rotate(45deg) translate(8px, 6px);
+}
+.bar_b{
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    transform: rotate(-45deg) translate(-4px, 6px);
+}
 #scroll-box {
     overflow-y: scroll;
     -ms-overflow-style: none;
@@ -27,19 +42,64 @@
     display: none;
 }
 #message_content {
-position: relative;
-display: inline-block; /* 吹き出しが文字幅に合わせます */
-margin: 15px 20px 20px;
-padding: 10px 20px;
-background: #696969; //（◯）カラー変更はこちら
-text-align: left; //テキスト左揃え
+    position: relative;
+    display: inline-block; /* 吹き出しが文字幅に合わせます */
+    margin: 15px 20px 20px;
+    padding: 10px 20px;
+    background: #696969; //（◯）カラー変更はこちら
+    text-align: left; //テキスト左揃え
 border-radius: 15px; //枠の丸みの設定はこちら
 }
 #message_content::after {
-content: "";
-border: 15px solid transparent;
-border-top-color: #696969; //（◯）とカラーを合わせる
-position: absolute;
-top: 15px; //三角部分の高さ
-left: -15px; //三角部分の位置
+    content: "";
+    border: 15px solid transparent;
+    border-top-color: #696969; //（◯）とカラーを合わせる
+    position: absolute;
+    top: 15px; //三角部分の高さ
+    left: -15px; //三角部分の位置
 }
+@keyframes slide-close-menu {
+    0% {
+        right: 0.5%;
+    }
+    100% {
+        right: -100%;
+    }
+}
+.group_detail_menu {
+    z-index: 100;
+    background-color: white;
+    width: 25%;
+    height: 90%;
+    position: absolute;
+    right: -100%;
+    /*animation-name: slide-close-menu;
+    animation-duration: 1.5s;*/
+    display: flex;
+    flex-direction: column;
+}
+@keyframes slide-open-menu {
+    0% {
+        right: -100%;
+    }
+    100% {
+        right: 0.5%;
+    }
+}
+.group_detail_menu_open {
+    z-index: 100;
+    background-color: black;
+    opacity: 88%;
+    width: 25%;
+    height: 90%;
+    position: absolute;
+    right: 0.5%;
+    animation-name: slide-open-menu;
+    animation-duration: 0.5s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+

@@ -20,3 +20,25 @@ const message_delete = () => {
 //    mini_menu.style.display = 'none';
 //    return false;
 //}
+
+const group_detail = () => {
+    const target = document.getElementById('group_detail_menu');
+    if(target.className == 'group_detail_menu'){
+        const element = document.querySelector('.group_detail_menu');
+        element.className = 'group_detail_menu_open';
+    }else{
+        const element = document.querySelector('.group_detail_menu_open');
+        element.className = 'group_detail_menu';
+    }
+}
+
+const close_menu = () => {
+    const target = document.getElementById('group_detail_menu');
+    if(target.className == 'group_detail_menu'){
+        const element = document.querySelector('.group_detail_menu');
+        element.className = 'group_detail_menu_open';
+    }else{
+        const element = document.querySelector('.group_detail_menu_open');
+        element.className = 'group_detail_menu';
+    }
+}
