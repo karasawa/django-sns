@@ -149,7 +149,10 @@
     </div>
     <div>
         {% for group_member in group_members %}
-            <li class="text-white bg-opacity-100" style="font-size: 30px;">{{ group_member.nick_name }}</li>
+        <div class="mb-3" style="letter-spacing: 1px; display: block;align-items: center;line-height: 100%;">
+            <img src="/media/images/{{ group_member.icon }}" style="width: 30px;height: 30px;border-radius: 100%;">
+            <span class="text-white bg-opacity-100" style="font-size: 30px;">{{ group_member.nick_name }}</span>
+        </div>
         {% endfor %}
     </div>
 </div>

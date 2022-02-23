@@ -7,7 +7,7 @@ class Profile(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
     nick_name = models.CharField(max_length=20)
     icon = models.ImageField(upload_to='../media/images/', default='images/unknown.jpeg', null=True, blank=True)
-    one_mes = models.TextField(max_length=100)
+    one_mes = models.TextField(max_length=100, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

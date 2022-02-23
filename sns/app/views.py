@@ -176,7 +176,7 @@ def group_create(request):
                                      title=title,
                                      icon=icon).member.add(owner)
                 messages.success(request, title + 'を作成しました')
-                form = GroupForm()
+                form = GroupForm(request.POST)
                 return render(request, 'page/group.html', {'form': form})
             else:
                 messages.error(request, 'グループの作成に失敗しました')
@@ -186,7 +186,9 @@ def group_create(request):
             return render(request, 'page/group.html', {'form': form})
     else:
         form = GroupForm()
-        return render(request, 'page/group.html', {'form': form})
+        user = request.user
+        return render(request, 'page/group.html', {'form': form,
+                                                   'user': user})
 
 
 @login_required
