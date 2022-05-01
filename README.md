@@ -1,1 +1,1 @@
-# sns-demo
+# django-sns
